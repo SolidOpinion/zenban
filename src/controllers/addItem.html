@@ -1,0 +1,82 @@
+<template>
+
+    <div class="container">
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <require from="./autocomplete"></require>
+                <form>
+                    <div class="col-md-8" >
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Title" value.bind="item.title" focus.bind="isTitleFocus">
+                        </div>
+                        <div class="form-group">
+                            <textarea class="form-control" rows="7" value.bind="item.description"></textarea>
+                        </div>
+                        <div class="form-group" show.bind="hasFeature">
+                            <autocomplete value.two-way="item.featureTitle"
+                                          placeholder="Choose feature"
+                                          min-term-length=3
+                                          loader.bind="data"
+                                          value-id.two-way="item.feature"
+                            ></autocomplete>
+                        </div>
+                        <div class="form-group">
+                            <autocomplete value.two-way="item.requirementTitle"
+                                          placeholder="Choose functional requirement"
+                                          min-term-length=3
+                                          loader.bind="rdata"
+                                          value-id.two-way="item.requirement"
+                            ></autocomplete>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-default" onclick="document.location.href='#/';">Cancel</button>
+                            <button type="button" class="btn btn-primary" disabled.bind="!canSave" click.trigger="save()" id="saveButton">Save</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <div class="btn-group" role="group">
+                                <button type="button" class = "btn btn-default ${item.type=='feature' ? 'active' : ''}"  click.trigger="switchType('feature')">Feature</button>
+                                <button type="button" class="btn btn-default ${item.type=='task' ? 'active' : ''}"  click.trigger="switchType('task')">Task</button>
+                                <button type="button" class="btn btn-default ${item.type=='bug' ? 'active' : ''}"  click.trigger="switchType('bug')">Bug</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <autocomplete value.two-way="item.authorTitle"
+                                          placeholder="Choose author"
+                                          min-term-length=2
+                                          loader.bind="udata"
+                                          value-id.two-way="item.author"
+                            ></autocomplete>
+                        </div>
+                        <div class="form-group">
+                            <autocomplete value.two-way="item.assigneeTitle"
+                                          placeholder="Choose assignee"
+                                          min-term-length=2
+                                          loader.bind="udata"
+                                          value-id.two-way="item.assignee"
+                            ></autocomplete>
+                        </div>
+                        <div class="form-group"  show.bind="hasEstimate">
+                            <div class="btn-group" role="group" >
+                                <button type="button" class="btn btn-default ${item.estimate==0 ? 'active' : ''}" click.trigger="switchEstimate(0)">?</button>
+                                <button type="button" class="btn btn-default ${item.estimate==2 ? 'active' : ''}" click.trigger="switchEstimate(2)">S</button>
+                                <button type="button" class="btn btn-default ${item.estimate==5 ? 'active' : ''}" click.trigger="switchEstimate(5)">M</button>
+                                <button type="button" class="btn btn-default ${item.estimate==13 ? 'active' : ''}" click.trigger="switchEstimate(13)">XL</button>
+                                <button type="button" class="btn btn-default ${item.estimate==21 ? 'active' : ''}" click.trigger="switchEstimate(21)">XXL</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-danger ${item.isProblem ? 'active' : ''}" click.trigger="switchProblem()">Report a problem</button>
+                        </div>
+                        <div class="form-group">
+                            <textarea class="form-control" rows="3" show.bind="item.isProblem" value.bind="item.problemDescription" focus.bind="isProblemFocus"></textarea>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</template>

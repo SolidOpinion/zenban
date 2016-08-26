@@ -1,0 +1,33 @@
+<template>
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">Users</div>
+            <div class="panel-body">
+                <div class="col-md-5">
+                    <div show.bind="isForm">
+                        <form role="form" submit.delegate="save()">
+                            <div class="form-group">
+                                <label for="inputEmail">Email address</label>
+                                <input id="inputEmail" type="text" class="form-control" placeholder="Email" value.bind="user.email">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputPass">Password</label>
+                                <input id="inputPass" type="password" class="form-control" placeholder="Password" value.bind="user.password">
+                            </div>
+                            <div class="form-group" align="right">
+                                <button type="button" class="btn btn-default" click.trigger="hide()">Cancel</button>
+                                <button type="button" class="btn btn-primary" disabled.bind="!canSave" click.trigger="save()">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <button type="button" class="btn btn-primary" click.trigger="create()" style="margin-bottom: 10px;">Create</button>
+                    <div class="list-group" >
+                        <a href="#" class="list-group-item" repeat.for="u of users" current.bind="u" click.trigger="edit(u._id)">${u.email}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

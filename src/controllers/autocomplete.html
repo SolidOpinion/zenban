@@ -1,0 +1,22 @@
+<template>
+    <require from="./autocomplete.css"></require>
+    <div class="autocomplete-container">
+        <input class="form-control"
+               autocomplete="off"
+               value.bind="value"
+               keyup.delegate="inputKeyPressed($event)"
+               placeholder.bind="placeholder"
+               blur.trigger="hideSuggestions()"
+               focus.bind="hasFocus">
+        <div class="autocomplete-suggestion" show.bind="isShown">
+            <div class="list-group">
+                <a data-id="${item._id}"
+                   data-value="${item.title}"
+                   class="list-group-item"
+                   repeat.for="item of items"
+                   mousedown.delegate="itemSelected($event)"><span>${item.title}</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</template>

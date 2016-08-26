@@ -1,0 +1,8 @@
+<template>
+    <ul class="tree">
+        <li><a href="#" click.trigger="sendEdit(current._id)">${current.title} [${current.requirementCode}]</a></li>
+        <li if.bind="current.children.length > 0">
+            <node repeat.for="r of current.children" current.bind="r" edit.call="sendEdit(id)"></node>
+        </li>
+    </ul>
+</template>

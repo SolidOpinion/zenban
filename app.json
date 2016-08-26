@@ -1,0 +1,8 @@
+{
+  "name": "ZenBan",
+  "description": "Next Task Tracker",
+  "repository": "https://github.com/solidopinion/zenban",
+  "logo": "",
+  "keywords": [],
+  "image": "heroku/nodejs"
+}

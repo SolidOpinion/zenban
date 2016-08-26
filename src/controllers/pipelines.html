@@ -1,0 +1,37 @@
+<template>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header" style="width:100%;">
+        <form class="navbar-form navbar-left" if.bind="isPipelineOptions">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="By text">
+          </div>
+          <div class="form-group">
+            <input class="form-control" placeholder="Functional requrment" autocomplete="off">
+            <input class="form-control" placeholder="Feature" autocomplete="off">
+            <input class="form-control" placeholder="Assignee" autocomplete="off">
+            <div class="btn-group" role="group" aria-label="...">
+              <button type="button" class="btn btn-default ${filter.isFeatures ? 'active' : ''}" click.trigger="switchFeatures()">Features</button>
+              <button type="button" class="btn btn-default ${filter.isTasks ? 'active' : ''}" click.trigger="switchTasks()">Tasks</button>
+              <button type="button" class="btn btn-default ${filter.isBugs ? 'active' : ''}" click.trigger="switchBugs()">Bugs</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <main class="pipelines">
+    <div class="pipeline" repeat.for="status of statuses">
+      <div class="pipeline-header">${status} <span class="badge">${_items.totals[status]}</span>
+      </div>
+      <ul class="items" data-status="${status}">
+        <li class="ui-state-default item item-${i.type}" repeat.for="i of _items[status]" current.bind="i" data-id="${i._id}" id="${i._id}">
+          <span class="badge badge-task" style="margin-right:6px;" if.bind="i.type != 'feature'" >${i.estimate}</span>
+          ${i.title}
+          <a href="#/item/${i._id}">edit</a>
+        </li>
+      </ul>
+    </div>
+  </main>
+</template>

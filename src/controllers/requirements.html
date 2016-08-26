@@ -1,0 +1,61 @@
+<template>
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="col-md-4">
+                    <div show.bind="isForm">
+                        <form role="form" submit.delegate="save()">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Title" value.bind="requirement.title">
+                        </div>
+                        <div class="form-group" align="right">
+                            <button type="button" class="btn btn-warning" show.bind="requirement._id" click.trigger="create(requirement._id)">Add child</button>
+                            <button type="button" class="btn btn-default" click.trigger="hide()">Cancel</button>
+                            <button type="button" class="btn btn-danger" show.bind="requirement._id" click.trigger="remove(requirement._id)">Remove</button>
+                            <button type="button" class="btn btn-primary" disabled.bind="!canSave" click.trigger="save()">Save</button>
+                        </div>
+                        </form>
+                    </div>
+
+
+
+                    <!--
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Title" value.bind="functions.title">
+                    </div>
+                    <div class="form-group" align="right">
+                        <button type="button" class="btn btn-warning">Add child</button>
+                        <button type="button" class="btn btn-default">Cancel</button>
+                        <button type="button" class="btn btn-primary">Save</button>
+                    </div>
+                    <div style="padding: 10px;">
+                        <span class="label label-danger">Bugs</span>
+                    </div>
+                    <div style="padding: 10px;">
+                        <a href="#">Create super design</a>
+                    </div>
+                    <div style="padding: 10px;">
+                        <span class="label label-success">Features</span>
+                    </div>
+                    <div style="padding: 10px;"><a href="#">Create super design. Create super design. Create super design. Create super design. Create super design. </a></div>
+                    <div style="padding: 10px;"><a href="#">Create super design</a></div>
+                    <div style="padding: 10px;"><a href="#">Create super design</a></div>
+                    <div style="padding: 10px;"><a href="#">Create super design</a></div>
+                    <div style="padding: 10px;"><a href="#">Create super design</a></div>
+                    <div style="padding: 10px;"><a href="#">Create super design</a></div>
+                    -->
+                </div>
+                <div class="col-md-8" >
+                    <button type="button" class="btn btn-primary"
+                            show.bind="requirements.length < 1"
+                            click.trigger="create(null)"
+                    >Create</button>
+                    <div if.bind="requirements.length > 0">
+                        <require from='./node'></require>
+                        <node repeat.for="r of requirements" current.bind="r" edit.call="edit(id)"></node>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

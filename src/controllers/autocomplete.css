@@ -1,0 +1,13 @@
+.autocomplete-suggestion {
+    position: absolute;
+    top: 35px;
+    left: 2px;
+    height: 300px;
+    z-index: 999;
+    overflow-y:auto;
+    cursor: pointer;
+}
+
+.autocomplete-container {
+    position: relative;
+}

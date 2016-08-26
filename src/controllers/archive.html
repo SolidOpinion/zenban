@@ -1,0 +1,23 @@
+<template>
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">Archive</div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Closed</th>
+                        <th>Title</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr repeat.for="i of items" current.bind="i">
+                        <td>${i.updatedTitle}</td>
+                        <td width="80%"><a href="#/item/${i._id}">${i.title}</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</template>
