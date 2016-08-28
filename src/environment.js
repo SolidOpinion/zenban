@@ -1,5 +1,5 @@
 export default {
-  debug: false,
-  testing: false,
-  api: "https://still-savannah-15219.herokuapp.com"
+  debug: true,
+  testing: true,
+  api: "http://localhost:5000"
 };
