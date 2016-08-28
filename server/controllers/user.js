@@ -1,6 +1,6 @@
 'use strict';
 var router = require('express').Router();
-var User = require('./server/models/user');
+var User = require('../models/user');
 
 router.get('/user', function(req, res) {
 

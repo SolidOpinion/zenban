@@ -10,7 +10,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "./node_modules/.bin/mocha --reporter spec"
+    "test": "./node_modules/.bin/mocha ./server/tests/*.js"
   },
   "dependencies": {
     "aurelia-animator-css": "^1.0.0-rc.1.0.0",
@@ -29,6 +29,7 @@
     "jquery-ui-dist": "^1.12.0",
     "mongodb": "^2.2.5",
     "mongoose": "^4.5.9",
+    "mongoose-auto-increment": "^5.0.1",
     "mongoose-sequence": "^3.0.2"
   },
   "peerDependencies": {},
@@ -50,6 +51,7 @@
     "babel-register": "^6.9.0",
     "browser-sync": "^2.13.0",
     "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
     "connect-history-api-fallback": "^1.2.0",
     "gulp": "github:gulpjs/gulp#4.0",
     "gulp-babel": "^6.1.2",
