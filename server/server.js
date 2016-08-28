@@ -3,11 +3,11 @@ var app          = express();
 var bodyParser   = require('body-parser');
 var mongoose     = require('mongoose');
 var autoInc      = require('mongoose-auto-increment');
+var config       = require('./config.json')[process.env.NODE_ENV || 'dev'];
 
 mongoose.Promise = require('bluebird');
 
-//var connection = mongoose.connect('mongodb://zenban:zenban@candidate.14.mongolayer.com:11183,candidate.45.mongolayer.com:10871/app55659082');
-var connection = mongoose.connect('mongodb://localhost/zenban');
+var connection = mongoose.connect(config.MONGO_URI);
 
 autoInc.initialize(connection);
 
@@ -36,5 +36,10 @@ app.use('/api', userRoutes);
 app.listen(app.get('port'), function() {
     console.log('ZenBan API is running on port', app.get('port'));
 });
+
+app.cleanupCollection = function(collectionName) {
+    mongoose.connection.db.dropCollection(collectionName);
+}
+
 
 module.exports = app;

@@ -1,0 +1,8 @@
+{
+  "dev": {
+    "MONGO_URI": "mongodb://localhost/zenban"
+  },
+  "prod": {
+    "MONGO_URI": "mongodb://zenban:zenban@candidate.14.mongolayer.com:11183,candidate.45.mongolayer.com:10871/app55659082"
+  }
+}
