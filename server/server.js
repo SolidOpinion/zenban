@@ -37,9 +37,4 @@ app.listen(app.get('port'), function() {
     console.log('ZenBan API is running on port', app.get('port'));
 });
 
-app.cleanupCollection = function(collectionName) {
-    mongoose.connection.db.dropCollection(collectionName);
-}
-
-
 module.exports = app;
