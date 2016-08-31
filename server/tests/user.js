@@ -58,4 +58,18 @@ describe("/user route", function() {
         });
     });
 
+    it("user signup error handling", function(done) {
+        chai.request(server)
+            .post('/api/user')
+            .send({
+                email: 'nick',
+                name: 'nick',
+                password: '123456'
+            })
+            .end(function(err, res) {
+                res.should.have.status(500);
+                done();
+            });
+    });
+
 });

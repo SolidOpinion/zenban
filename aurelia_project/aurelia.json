@@ -104,6 +104,7 @@
           "aurelia-templating",
           "aurelia-templating-binding",
           "aurelia-http-client",
+          "aurelia-fetch-client",
           "jquery",
           {
             "name": "jquery-ui-dist",
@@ -132,7 +133,6 @@
               "css/font-awesome.css"
             ]
           },
-
           {
             "name": "text",
             "path": "../scripts/text"

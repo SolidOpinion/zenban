@@ -3,7 +3,7 @@ import {HttpClient} from "aurelia-http-client";
 import environment from '../environment';
 
 let searchUrl = environment.api + "/api/search/users";
-let baseUrl = environment.api + "/api/users";
+let baseUrl = environment.api + "/api/user";
 
 @inject(HttpClient)
 export class UsersData {

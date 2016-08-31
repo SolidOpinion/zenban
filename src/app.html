@@ -1,12 +1,29 @@
 <template>
   <require from="bootstrap/css/bootstrap.css"></require>
   <require from="font-awesome/css/font-awesome.css"></require>
-  <div class="container-fluid" align="center" style="padding: 3px;">
-    <a href="#/">board</a> | <a href="#/requirements">requirements</a>
-    | <a href="#/item">create</a>
-    | <a href="#/users">users</a>
-    | <a href="#/archive">archive</a>
+
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container" if.bind="isLogged">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Home</a></li>
+        <li><a href="#">New request</a></li>
+        <li><a href="#">Requests</a></li>
+        <li><a href="#">Tasks</a></li>
+        <li><a href="#">Archive</a></li>
+      </ul>
+      <p class="navbar-text navbar-right">Signed in as ${user.name}, <a href="/#/logout" class="navbar-link">Logout</a></p>
+    </div>
+    <div class="container" if.bind="!isLogged">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Home</a></li>
+        <li><a href="/#/login">Login</a></li>
+        <li><a href="/#/signup">Signup</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container" style="margin-top: 60px;">
+    <router-view></router-view>
   </div>
 
-  <router-view></router-view>
 </template>
