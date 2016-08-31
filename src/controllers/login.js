@@ -5,11 +5,9 @@ import {Router} from "aurelia-router";
 @inject(Auth, Router)
 export class Login {
 
-    heading = "Login";
-
     email = "";
     password = "";
-    loginError = "";
+    error = "";
 
     constructor(auth, router) {
         this.auth = auth;
@@ -22,7 +20,7 @@ export class Login {
                 this.router.navigate('');
             })
             .catch(error => {
-                this.loginError = error.message;
+                this.error = error.message;
             });
     };
 
@@ -30,4 +28,8 @@ export class Login {
         return this.auth.isLogged;
     }
 
+    get showError() {
+        if (this.error.length > 0) return true;
+        return false;
+    }
 }

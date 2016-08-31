@@ -1,22 +1,21 @@
 import {inject} from 'aurelia-framework';
 import {UsersData} from "../models/usersData";
 import {Auth} from '../models/auth';
+import {Router} from "aurelia-router";
 
 
-@inject(UsersData, Auth)
+@inject(UsersData, Auth, Router)
 export class Signup {
-
-    heading = 'Sign Up';
 
     email = '';
     name = '';
     password = '';
 
-    signupError = '';
-
-    constructor(usersData, auth) {
+    constructor(usersData, auth, router) {
         this.usersData = usersData;
         this.auth = auth;
+        this.router = router;
+        this.error = '';
     };
 
     signup() {
@@ -25,23 +24,15 @@ export class Signup {
 
         this.usersData.addNew(userInfo)
             .then(response => {
-                console.log(response);
+                this.router.navigate('#/login');
             })
             .catch(error => {
-                console.log(error);
+                this.error = error.content.message;
             });
-
-
-        /*
-        return this.auth.signup(userInfo)
-        .then((response) => {
-            console.log("Signed Up!");
-        })
-        .catch(error => {
-            error.json().then(function(e){
-                self.signupError = e.message;
-            });
-        });
-*/
     };
+
+    get showError() {
+        if (this.error.length > 0) return true;
+        return false;
+    }
 }
