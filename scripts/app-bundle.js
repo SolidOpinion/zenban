@@ -45,7 +45,7 @@ define('app',['exports', 'aurelia-event-aggregator', 'aurelia-dependency-injecti
         App.prototype.configureRouter = function configureRouter(config, router) {
             this.router = router;
 
-            config.map([{ route: "", moduleId: "controllers/welcome", nav: true, title: "Welcome", name: "welcome" }, { route: "signup", moduleId: "controllers/signup", nav: false, title: "Signup", name: "signup" }, { route: "login", moduleId: "controllers/login", nav: false, title: "Login", name: "login" }, { route: "logout", moduleId: "controllers/logout", nav: false, title: "Logout", name: "logout" }, { route: "secret", moduleId: "controllers/secret", nav: true, title: "Secret", name: "secret" }]);
+            config.map([{ route: "", moduleId: "controllers/welcome", nav: true, title: "Welcome", name: "welcome" }, { route: "signup", moduleId: "controllers/signup", nav: false, title: "Signup", name: "signup" }, { route: "login", moduleId: "controllers/login", nav: false, title: "Login", name: "login" }, { route: "logout", moduleId: "controllers/logout", nav: false, title: "Logout", name: "logout" }, { route: "test", moduleId: "controllers/test", nav: false, title: "Test", name: "test" }, { route: "secret", moduleId: "controllers/secret", nav: true, title: "Secret", name: "secret" }]);
         };
 
         App.prototype.navigationSuccess = function navigationSuccess(event) {
@@ -93,7 +93,7 @@ define('environment',["exports"], function (exports) {
     api: "http://localhost:5000"
   };
 });
-define('main',['exports', './environment'], function (exports, _environment) {
+define('main',['exports', './environment', 'aurelia-framework'], function (exports, _environment, _aureliaFramework) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -235,7 +235,7 @@ define('controllers/logout',['exports', 'aurelia-framework', '../models/auth', '
         return Logout;
     }()) || _class);
 });
-define('controllers/signup',['exports', 'aurelia-framework', '../models/usersData', '../models/auth', 'aurelia-router'], function (exports, _aureliaFramework, _usersData, _auth, _aureliaRouter) {
+define('controllers/signup',['exports', 'aurelia-framework', '../models/rest', '../models/auth', 'aurelia-router'], function (exports, _aureliaFramework, _rest, _auth, _aureliaRouter) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -269,15 +269,15 @@ define('controllers/signup',['exports', 'aurelia-framework', '../models/usersDat
 
     var _dec, _class;
 
-    var Signup = exports.Signup = (_dec = (0, _aureliaFramework.inject)(_usersData.UsersData, _auth.Auth, _aureliaRouter.Router), _dec(_class = function () {
-        function Signup(usersData, auth, router) {
+    var Signup = exports.Signup = (_dec = (0, _aureliaFramework.inject)(_rest.Rest, _auth.Auth, _aureliaRouter.Router), _dec(_class = function () {
+        function Signup(rest, auth, router) {
             _classCallCheck(this, Signup);
 
             this.email = '';
             this.name = '';
             this.password = '';
 
-            this.usersData = usersData;
+            this.rest = rest;
             this.auth = auth;
             this.router = router;
             this.error = '';
@@ -286,13 +286,11 @@ define('controllers/signup',['exports', 'aurelia-framework', '../models/usersDat
         Signup.prototype.signup = function signup() {
             var _this = this;
 
-            var userInfo = { name: this.name, email: this.email, password: this.password };
-            var self = this;
-
-            this.usersData.addNew(userInfo).then(function (response) {
+            this.rest.create('user', { name: this.name, email: this.email, password: this.password }).then(function (response) {
                 _this.router.navigate('#/login');
             }).catch(function (error) {
-                _this.error = error.content.message;
+                console.log(error);
+                _this.error = error.message;
             });
         };
 
@@ -307,12 +305,13 @@ define('controllers/signup',['exports', 'aurelia-framework', '../models/usersDat
         return Signup;
     }()) || _class);
 });
-define('controllers/welcome',['exports'], function (exports) {
+define('controllers/test',['exports', 'aurelia-framework', '../models/rest', '../models/auth', 'aurelia-router'], function (exports, _aureliaFramework, _rest, _auth, _aureliaRouter) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
+    exports.Signup = undefined;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -320,17 +319,53 @@ define('controllers/welcome',['exports'], function (exports) {
         }
     }
 
-    var Welcome = exports.Welcome = function Welcome(usersData) {
+    var _dec, _class;
+
+    _aureliaFramework.LogManager.setLevel(_aureliaFramework.LogManager.logLevel.error);
+
+    var Signup = exports.Signup = (_dec = (0, _aureliaFramework.inject)(_rest.Rest, _auth.Auth, _aureliaRouter.Router, _aureliaFramework.LogManager), _dec(_class = function Signup(rest, auth, router, logManager) {
+        _classCallCheck(this, Signup);
+
+        this.email = '';
+        this.name = '';
+        this.password = '';
+
+        this.rest = rest;
+        this.auth = auth;
+        this.router = router;
+        this.logger = logManager.getLogger(this);
+        this.error = '';
+
+        this.logger.warn("test");
+
+        this.rest.list('test', { name: 'vasya' }).then(function (response) {
+            console.log(response);
+        }).catch(function (error) {
+            console.log(error);
+        });
+    }) || _class);
+});
+define('controllers/welcome',['exports', '../models/rest', 'aurelia-framework'], function (exports, _rest, _aureliaFramework) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    exports.Welcome = undefined;
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var _dec, _class;
+
+    var Welcome = exports.Welcome = (_dec = (0, _aureliaFramework.inject)(_rest.Rest), _dec(_class = function Welcome(rest) {
         _classCallCheck(this, Welcome);
 
-        this.heading = 'Welcome to the Random Quotes App!';
-        this.info = 'You can get a random quote without logging in, but if you do log in you can get a super secret quote!';
-
-        this.data = usersData;
-        this.isForm = false;
-        this.user = {};
-        this.users = [];
-    };
+        this.rest = rest;
+    }) || _class);
 });
 define('models/auth',['exports', 'aurelia-framework', 'aurelia-http-client', '../environment'], function (exports, _aureliaFramework, _aureliaHttpClient, _environment) {
     'use strict';
@@ -417,6 +452,98 @@ define('models/auth',['exports', 'aurelia-framework', 'aurelia-http-client', '..
         return Auth;
     }()) || _class);
 });
+define('models/rest',['exports', 'aurelia-framework', 'aurelia-http-client', '../environment'], function (exports, _aureliaFramework, _aureliaHttpClient, _environment) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    exports.Rest = undefined;
+
+    var _environment2 = _interopRequireDefault(_environment);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var _dec, _class;
+
+    _aureliaFramework.LogManager.setLevel(_aureliaFramework.LogManager.logLevel.error);
+
+    var Rest = exports.Rest = (_dec = (0, _aureliaFramework.inject)(_aureliaHttpClient.HttpClient), _dec(_class = function () {
+        function Rest(httpClient) {
+            _classCallCheck(this, Rest);
+
+            this.http = httpClient;
+            this.endpoint = _environment2.default.api;
+        }
+
+        Rest.prototype.create = function create(resource, document) {
+            var self = this;
+            return new Promise(function (resolve, reject) {
+                self.http.post(self.endpoint + "/api/" + resource, document).then(function (response) {
+                    resolve(response.content);
+                }).catch(function (error) {
+                    reject({ code: error.statusCode, message: error.content.message });
+                });
+            });
+        };
+
+        Rest.prototype.modify = function modify(resource, id, fields) {
+            var self = this;
+            return new Promise(function (resolve, reject) {
+                self.http.put(self.endpoint + "/api/" + resource + "/" + id, fields).then(function (response) {
+                    resolve(response.content);
+                }).catch(function (error) {
+                    reject({ code: error.statusCode, message: error.content.message });
+                });
+            });
+        };
+
+        Rest.prototype.delete = function _delete(resource, id) {
+            var self = this;
+            return new Promise(function (resolve, reject) {
+                self.http.delete(self.endpoint + "/api/" + resource + "/" + id).then(function (response) {
+                    resolve(response.content);
+                }).catch(function (error) {
+                    reject({ code: error.statusCode, message: error.content.message });
+                });
+            });
+        };
+
+        Rest.prototype.get = function get(resource, id) {
+            var self = this;
+            return new Promise(function (resolve, reject) {
+                self.http.get(self.endpoint + "/api/" + resource + "/" + id).then(function (response) {
+                    resolve(response.content);
+                }).catch(function (error) {
+                    reject({ code: error.statusCode, message: error.content.message });
+                });
+            });
+        };
+
+        Rest.prototype.list = function list(resource, filters) {
+            var self = this;
+            return new Promise(function (resolve, reject) {
+                self.http.createRequest("/api/" + resource + "-list").asGet().withBaseUrl(self.endpoint).withParams(filters).send().then(function (response) {
+                    resolve(response.content);
+                }).catch(function (error) {
+                    resolve(error.content);
+                });
+            });
+        };
+
+        return Rest;
+    }()) || _class);
+});
 define('models/usersData',["exports", "aurelia-framework", "aurelia-http-client", "../environment"], function (exports, _aureliaFramework, _aureliaHttpClient, _environment) {
     "use strict";
 
@@ -484,9 +611,10 @@ define('models/usersData',["exports", "aurelia-framework", "aurelia-http-client"
         return UsersData;
     }()) || _class);
 });
-define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"bootstrap/css/bootstrap.css\"></require>\n  <require from=\"font-awesome/css/font-awesome.css\"></require>\n\n  <nav class=\"navbar navbar-default \">\n    <div class=\"container\" if.bind=\"isLogged\">\n      <ul class=\"nav navbar-nav\">\n        <li class=\"active\"><a href=\"#\">Home</a></li>\n        <li><a href=\"#\">New request</a></li>\n        <li><a href=\"#\">Requests</a></li>\n        <li><a href=\"#\">Tasks</a></li>\n        <li><a href=\"#\">Archive</a></li>\n      </ul>\n      <p class=\"navbar-text navbar-right\">Signed in as ${user.name}, <a href=\"/#/logout\" class=\"navbar-link\">Logout</a></p>\n    </div>\n    <div class=\"container\" if.bind=\"!isLogged\">\n      <ul class=\"nav navbar-nav\">\n        <li class=\"active\"><a href=\"#\">Home</a></li>\n        <li><a href=\"/#/login\">Login</a></li>\n        <li><a href=\"/#/signup\">Signup</a></li>\n      </ul>\n    </div>\n  </nav>\n\n  <div class=\"container\">\n    <router-view></router-view>\n  </div>\n\n</template>\n"; });
+define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"bootstrap/css/bootstrap.css\"></require>\n  <require from=\"font-awesome/css/font-awesome.css\"></require>\n\n  <nav class=\"navbar navbar-default \">\n    <div class=\"container\" if.bind=\"isLogged\">\n      <ul class=\"nav navbar-nav\">\n        <li class=\"active\"><a href=\"#\">Home</a></li>\n        <li><a href=\"#\">New request</a></li>\n        <li><a href=\"#\">Requests</a></li>\n        <li><a href=\"#\">Tasks</a></li>\n        <li><a href=\"#\">Archive</a></li>\n        <li><a href=\"/#/test\">test</a></li>\n\n      </ul>\n      <p class=\"navbar-text navbar-right\">Signed in as ${user.name}, <a href=\"/#/logout\" class=\"navbar-link\">Logout</a></p>\n    </div>\n    <div class=\"container\" if.bind=\"!isLogged\">\n      <ul class=\"nav navbar-nav\">\n        <li class=\"active\"><a href=\"#\">Home</a></li>\n        <li><a href=\"/#/login\">Login</a></li>\n        <li><a href=\"/#/signup\">Signup</a></li>\n      </ul>\n    </div>\n  </nav>\n\n  <div class=\"container\">\n    <router-view></router-view>\n  </div>\n\n</template>\n"; });
 define('text!controllers/login.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"panel panel-default center\" style=\"width: 400px;\">\n        <div class=\"panel-heading\">\n            <h3 class=\"panel-title\">Login</h3>\n        </div>\n        <div class=\"panel-body\">\n            <form role=\"form\" submit.delegate=\"login()\">\n                <div class=\"form-group\">\n                    <label for=\"email\">Email</label>\n                    <input type=\"text\" value.bind=\"email\" class=\"form-control\" id=\"email\" placeholder=\"Email\">\n                </div>\n                <div class=\"form-group\">\n                    <label for=\"password\">Password</label>\n                    <input type=\"password\" value.bind=\"password\" class=\"form-control\" id=\"password\" placeholder=\"Password\">\n                </div>\n                <button type=\"submit\" class=\"btn btn-default\">Login</button>\n            </form>\n        </div>\n        <div class=\"panel-footer\" if.bind=\"showError\" style=\"color: #ee0701;\">${error}</div>\n    </div>\n</template>"; });
 define('text!controllers/logout.html', ['module'], function(module) { module.exports = "<template></template>"; });
 define('text!controllers/signup.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"panel panel-default center\" style=\"width: 400px;\">\n        <div class=\"panel-heading\">\n            <h3 class=\"panel-title\">Signup</h3>\n        </div>\n        <div class=\"panel-body\">\n            <form role=\"form\" submit.delegate=\"signup()\">\n                <div class=\"form-group\">\n                    <label for=\"email\">Name</label>\n                    <input type=\"text\" value.bind=\"name\" class=\"form-control\" id=\"name\" placeholder=\"Name\">\n                </div>\n                <div class=\"form-group\">\n                    <label for=\"email\">Email</label>\n                    <input type=\"text\" value.bind=\"email\" class=\"form-control\" id=\"email\" placeholder=\"Email\">\n                </div>\n                <div class=\"form-group\">\n                    <label for=\"password\">Password</label>\n                    <input type=\"password\" value.bind=\"password\" class=\"form-control\" id=\"password\" placeholder=\"Password\">\n                </div>\n                <button type=\"submit\" class=\"btn btn-default\">Signup</button>\n            </form>\n        </div>\n        <div class=\"panel-footer\" if.bind=\"showError\" style=\"color: #ee0701;\">${error}</div>\n    </div>\n</template>"; });
+define('text!controllers/test.html', ['module'], function(module) { module.exports = "<template>\n    test\n</template>\n"; });
 define('text!controllers/welcome.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"jumbotron\">\n        <h1>Hello, SolidTeam!</h1>\n        <p>Welcome to ZenBan - our new mega tracker.</p>\n    </div>\n</template>"; });
 //# sourceMappingURL=app-bundle.js.map

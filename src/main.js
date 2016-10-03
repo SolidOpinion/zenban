@@ -1,4 +1,6 @@
 import environment from './environment';
+import {LogManager} from 'aurelia-framework';
+
 
 Promise.config({
   warnings: {

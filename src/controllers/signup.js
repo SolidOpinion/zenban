@@ -1,33 +1,31 @@
 import {inject} from 'aurelia-framework';
-import {UsersData} from "../models/usersData";
+import {Rest} from "../models/rest";
 import {Auth} from '../models/auth';
 import {Router} from "aurelia-router";
 
 
-@inject(UsersData, Auth, Router)
+@inject(Rest, Auth, Router)
 export class Signup {
 
     email = '';
     name = '';
     password = '';
 
-    constructor(usersData, auth, router) {
-        this.usersData = usersData;
+    constructor(rest, auth, router) {
+        this.rest = rest;
         this.auth = auth;
         this.router = router;
         this.error = '';
     };
 
     signup() {
-        var userInfo = { name: this.name, email: this.email, password: this.password }
-        var self = this;
-
-        this.usersData.addNew(userInfo)
+        this.rest.create('user', { name: this.name, email: this.email, password: this.password })
             .then(response => {
                 this.router.navigate('#/login');
             })
             .catch(error => {
-                this.error = error.content.message;
+                console.log(error);
+                this.error = error.message;
             });
     };
 

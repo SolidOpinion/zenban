@@ -10,7 +10,7 @@ router.post('/user', function(req, res, next) {
 
     var emailParts = req.body.email.split('@');
     if (emailParts.length != 2) {
-        res.status(406).json({ message: "Email format incorrect" });
+        res.status(406).json({ message: "Email format is incorrect" });
         return next();
     }
 
@@ -35,14 +35,16 @@ router.post('/user', function(req, res, next) {
 });
 
 
-
 router.get('/user', function(req, res, next) {
+    console.log("enter /user");
     Auth.getUserByToken(req.header('Authorization'))
         .then(user => {
+            console.log("ok /user");
             res.json(user);
             next();
         })
         .catch(error => {
+            console.log("error /user");
             res.sendStatus(401);
             next();
         })

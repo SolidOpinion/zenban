@@ -8,7 +8,7 @@ var User = require('../models/user');
 
 chai.use(chaiHttp);
 
-describe("/user route", function() {
+describe.skip("/user route", function() {
     this.timeout(10000);
 
     beforeEach(function (done) {

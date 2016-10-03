@@ -1,10 +1,12 @@
 {
   "dev": {
     "MONGO_URI": "mongodb://localhost/zenban",
-    "SECRET": "P%S6XRD#()E+D!q}t>?~e,%G6aU`^KtAuLeHk.vq??I|9#}t&$2|k?1%YtMg1l_j"
+    "SECRET": "P%S6XRD#()E+D!q}t>?~e,%G6aU`^KtAuLeHk.vq??I|9#}t&$2|k?1%YtMg1l_j",
+    "LOG_LEVEL": "INFO"
   },
   "prod": {
     "MONGO_URI": "mongodb://zenban:zenban@candidate.14.mongolayer.com:11183,candidate.45.mongolayer.com:10871/app55659082",
-    "SECRET": "P%S6XRD#()E+D!q}t>?~e,%G6aU`^KtAuLeHk.vq??I|9#}t&$2|k?1%YtMg1l_j"
+    "SECRET": "P%S6XRD#()E+D!q}t>?~e,%G6aU`^KtAuLeHk.vq??I|9#}t&$2|k?1%YtMg1l_j",
+    "LOG_LEVEL": "ERROR"
   }
 }
