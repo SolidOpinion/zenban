@@ -23,7 +23,7 @@ export class App {
             { route: "login", moduleId: "controllers/login", nav: false, title: "Login", name: "login"},
             { route: "logout", moduleId: "controllers/logout", nav: false, title: "Logout", name: "logout"},
             { route: "test", moduleId: "controllers/test", nav: false, title: "Test", name: "test"},
-            { route: "secret", moduleId: "controllers/secret", nav: true, title: "Secret", name: "secret"}
+            { route: "request", moduleId: "controllers/request", nav: false, title: "Request", name: "request"}
         ]);
     }
 

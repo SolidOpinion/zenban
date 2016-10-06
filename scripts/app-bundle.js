@@ -45,7 +45,7 @@ define('app',['exports', 'aurelia-event-aggregator', 'aurelia-dependency-injecti
         App.prototype.configureRouter = function configureRouter(config, router) {
             this.router = router;
 
-            config.map([{ route: "", moduleId: "controllers/welcome", nav: true, title: "Welcome", name: "welcome" }, { route: "signup", moduleId: "controllers/signup", nav: false, title: "Signup", name: "signup" }, { route: "login", moduleId: "controllers/login", nav: false, title: "Login", name: "login" }, { route: "logout", moduleId: "controllers/logout", nav: false, title: "Logout", name: "logout" }, { route: "test", moduleId: "controllers/test", nav: false, title: "Test", name: "test" }, { route: "secret", moduleId: "controllers/secret", nav: true, title: "Secret", name: "secret" }]);
+            config.map([{ route: "", moduleId: "controllers/welcome", nav: true, title: "Welcome", name: "welcome" }, { route: "signup", moduleId: "controllers/signup", nav: false, title: "Signup", name: "signup" }, { route: "login", moduleId: "controllers/login", nav: false, title: "Login", name: "login" }, { route: "logout", moduleId: "controllers/logout", nav: false, title: "Logout", name: "logout" }, { route: "test", moduleId: "controllers/test", nav: false, title: "Test", name: "test" }, { route: "request", moduleId: "controllers/request", nav: false, title: "Request", name: "request" }]);
         };
 
         App.prototype.navigationSuccess = function navigationSuccess(event) {
@@ -233,6 +233,80 @@ define('controllers/logout',['exports', 'aurelia-framework', '../models/auth', '
         };
 
         return Logout;
+    }()) || _class);
+});
+define('controllers/request',['exports', 'aurelia-framework', '../models/rest', '../models/auth', 'aurelia-router'], function (exports, _aureliaFramework, _rest, _auth, _aureliaRouter) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    exports.Signup = undefined;
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var _createClass = function () {
+        function defineProperties(target, props) {
+            for (var i = 0; i < props.length; i++) {
+                var descriptor = props[i];
+                descriptor.enumerable = descriptor.enumerable || false;
+                descriptor.configurable = true;
+                if ("value" in descriptor) descriptor.writable = true;
+                Object.defineProperty(target, descriptor.key, descriptor);
+            }
+        }
+
+        return function (Constructor, protoProps, staticProps) {
+            if (protoProps) defineProperties(Constructor.prototype, protoProps);
+            if (staticProps) defineProperties(Constructor, staticProps);
+            return Constructor;
+        };
+    }();
+
+    var _dec, _class;
+
+    _aureliaFramework.LogManager.setLevel(_aureliaFramework.LogManager.logLevel.error);
+
+    var Signup = exports.Signup = (_dec = (0, _aureliaFramework.inject)(_rest.Rest, _auth.Auth, _aureliaRouter.Router, _aureliaFramework.LogManager), _dec(_class = function () {
+        function Signup(rest, auth, router, logManager) {
+            _classCallCheck(this, Signup);
+
+            this.error = '';
+            this.currentTab = 'Description';
+            this.request = {};
+            this.isNewRequest = true;
+
+            this.rest = rest;
+            this.auth = auth;
+            this.router = router;
+            this.logger = logManager.getLogger(this);
+
+            this.request.isProblem = false;
+            this.request.title = '';
+            this.request.description = '';
+            this.request.author = '';
+            this.request.creation_date = '';
+        }
+
+        Signup.prototype.switchTabTo = function switchTabTo(tabName) {
+            this.currentTab = tabName;
+        };
+
+        Signup.prototype.descriptionSave = function descriptionSave() {};
+
+        _createClass(Signup, [{
+            key: 'showError',
+            get: function get() {
+                if (this.error.length > 0) return true;
+                return false;
+            }
+        }]);
+
+        return Signup;
     }()) || _class);
 });
 define('controllers/signup',['exports', 'aurelia-framework', '../models/rest', '../models/auth', 'aurelia-router'], function (exports, _aureliaFramework, _rest, _auth, _aureliaRouter) {
@@ -544,76 +618,10 @@ define('models/rest',['exports', 'aurelia-framework', 'aurelia-http-client', '..
         return Rest;
     }()) || _class);
 });
-define('models/usersData',["exports", "aurelia-framework", "aurelia-http-client", "../environment"], function (exports, _aureliaFramework, _aureliaHttpClient, _environment) {
-    "use strict";
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-    exports.UsersData = undefined;
-
-    var _environment2 = _interopRequireDefault(_environment);
-
-    function _interopRequireDefault(obj) {
-        return obj && obj.__esModule ? obj : {
-            default: obj
-        };
-    }
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var _dec, _class;
-
-    var searchUrl = _environment2.default.api + "/api/search/users";
-    var baseUrl = _environment2.default.api + "/api/user";
-
-    var UsersData = exports.UsersData = (_dec = (0, _aureliaFramework.inject)(_aureliaHttpClient.HttpClient), _dec(_class = function () {
-        function UsersData(httpClient) {
-            _classCallCheck(this, UsersData);
-
-            this.http = httpClient;
-        }
-
-        UsersData.prototype.addNew = function addNew(user) {
-            return this.http.post(baseUrl, user).then(function (response) {
-                return response.content;
-            });
-        };
-
-        UsersData.prototype.getList = function getList() {
-            return this.http.get(baseUrl).then(function (response) {
-                return response.content;
-            });
-        };
-
-        UsersData.prototype.search = function search(term) {
-            return this.http.post(searchUrl, { search: term }).then(function (response) {
-                return response.content;
-            });
-        };
-
-        UsersData.prototype.getOne = function getOne(id) {
-            return this.http.get(baseUrl + "/" + id).then(function (response) {
-                return response.content;
-            });
-        };
-
-        UsersData.prototype.update = function update(id, user) {
-            return this.http.put(baseUrl + "/" + id, user).then(function (response) {
-                return response.content;
-            });
-        };
-
-        return UsersData;
-    }()) || _class);
-});
-define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"bootstrap/css/bootstrap.css\"></require>\n  <require from=\"font-awesome/css/font-awesome.css\"></require>\n\n  <nav class=\"navbar navbar-default \">\n    <div class=\"container\" if.bind=\"isLogged\">\n      <ul class=\"nav navbar-nav\">\n        <li class=\"active\"><a href=\"#\">Home</a></li>\n        <li><a href=\"#\">New request</a></li>\n        <li><a href=\"#\">Requests</a></li>\n        <li><a href=\"#\">Tasks</a></li>\n        <li><a href=\"#\">Archive</a></li>\n        <li><a href=\"/#/test\">test</a></li>\n\n      </ul>\n      <p class=\"navbar-text navbar-right\">Signed in as ${user.name}, <a href=\"/#/logout\" class=\"navbar-link\">Logout</a></p>\n    </div>\n    <div class=\"container\" if.bind=\"!isLogged\">\n      <ul class=\"nav navbar-nav\">\n        <li class=\"active\"><a href=\"#\">Home</a></li>\n        <li><a href=\"/#/login\">Login</a></li>\n        <li><a href=\"/#/signup\">Signup</a></li>\n      </ul>\n    </div>\n  </nav>\n\n  <div class=\"container\">\n    <router-view></router-view>\n  </div>\n\n</template>\n"; });
+define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"bootstrap/css/bootstrap.css\"></require>\n  <require from=\"font-awesome/css/font-awesome.css\"></require>\n\n  <nav class=\"navbar navbar-default \">\n    <div class=\"container\" if.bind=\"isLogged\">\n      <ul class=\"nav navbar-nav\">\n        <li class=\"active\"><a href=\"#\">Home</a></li>\n        <li><a href=\"/#/request\">New request</a></li>\n        <li><a href=\"#\">Requests</a></li>\n        <li><a href=\"#\">Tasks</a></li>\n        <li><a href=\"#\">Archive</a></li>\n        <li><a href=\"/#/test\">test</a></li>\n\n      </ul>\n      <p class=\"navbar-text navbar-right\">Signed in as ${user.name}, <a href=\"/#/logout\" class=\"navbar-link\">Logout</a></p>\n    </div>\n    <div class=\"container\" if.bind=\"!isLogged\">\n      <ul class=\"nav navbar-nav\">\n        <li class=\"active\"><a href=\"#\">Home</a></li>\n        <li><a href=\"/#/login\">Login</a></li>\n        <li><a href=\"/#/signup\">Signup</a></li>\n      </ul>\n    </div>\n  </nav>\n\n  <div class=\"container\">\n    <router-view></router-view>\n  </div>\n\n</template>\n"; });
 define('text!controllers/login.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"panel panel-default center\" style=\"width: 400px;\">\n        <div class=\"panel-heading\">\n            <h3 class=\"panel-title\">Login</h3>\n        </div>\n        <div class=\"panel-body\">\n            <form role=\"form\" submit.delegate=\"login()\">\n                <div class=\"form-group\">\n                    <label for=\"email\">Email</label>\n                    <input type=\"text\" value.bind=\"email\" class=\"form-control\" id=\"email\" placeholder=\"Email\">\n                </div>\n                <div class=\"form-group\">\n                    <label for=\"password\">Password</label>\n                    <input type=\"password\" value.bind=\"password\" class=\"form-control\" id=\"password\" placeholder=\"Password\">\n                </div>\n                <button type=\"submit\" class=\"btn btn-default\">Login</button>\n            </form>\n        </div>\n        <div class=\"panel-footer\" if.bind=\"showError\" style=\"color: #ee0701;\">${error}</div>\n    </div>\n</template>"; });
 define('text!controllers/logout.html', ['module'], function(module) { module.exports = "<template></template>"; });
+define('text!controllers/request.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"panel panel-default center\" style=\"width: 800px;\">\n        <div class=\"panel-heading\">\n            <h3 class=\"panel-title\" if.bind=\"!isNewRequest\" >Request</h3>\n            <h3 class=\"panel-title\" if.bind=\"isNewRequest\" >Create a new request</h3>\n            <div if.bind=\"showError\" style=\"color: #ee0701;\">${error}</div>\n        </div>\n        <div class=\"panel-body\">\n            <ul class=\"nav nav-tabs\">\n                <li role=\"presentation\" class=\"${currentTab == 'Description' ? 'active' : ''}\"><a href=\"#\" click.delegate=\"switchTabTo('Description')\">Description</a></li>\n\n                <li if.bind=\"!isNewRequest\" role=\"presentation\" class=\"${currentTab == 'Requirements' ? 'active' : ''}\"><a href=\"#\" click.delegate=\"switchTabTo('Requirements')\">Requirements</a></li>\n                <li if.bind=\"!isNewRequest\"  role=\"presentation\" class=\"${currentTab == 'Tasks' ? 'active' : ''}\"><a href=\"#\" click.delegate=\"switchTabTo('Tasks')\">Tasks</a></li>\n                <li if.bind=\"!isNewRequest\"  role=\"presentation\" class=\"${currentTab == 'People' ? 'active' : ''}\"><a href=\"#\" click.delegate=\"switchTabTo('People')\">People</a></li>\n                <li if.bind=\"!isNewRequest\"  role=\"presentation\" class=\"${currentTab == 'Documentation' ? 'active' : ''}\"><a href=\"#\" click.delegate=\"switchTabTo('Documentation')\">Documentation</a></li>\n                <li if.bind=\"!isNewRequest\"  role=\"presentation\" class=\"${currentTab == 'History' ? 'active' : ''}\"><a href=\"#\" click.delegate=\"switchTabTo('History')\">History</a></li>\n            </ul>\n<!-- Description -->\n           <div class=\"form-under-tab\" if.bind=\"currentTab == 'Description'\">\n               <form role=\"form\" submit.delegate=\"descriptionSave()\">\n                   <div class=\"checkbox\" align=\"right\"  if.bind=\"!isNewRequest\" >\n                       <label><input type=\"checkbox\" value.bind=\"request.isProblem\"> Request has a problem</label>\n                   </div>\n                   <div class=\"form-group\">\n                       <label for=\"title\">Title</label>\n                       <input type=\"text\" value.bind=\"request.title\" class=\"form-control\" id=\"title\">\n                   </div>\n                   <div class=\"form-group\">\n                       <label for=\"title\">Description</label>\n                       <textarea class=\"form-control\" rows=\"8\" value.bind=\"request.description\" id=\"description\"></textarea>\n                       <span if.bind=\"!isNewRequest\" style=\"color: gray;\">by ${request.author} on ${request.creation_date}</span>\n                   </div>\n                   <button type=\"submit\" class=\"btn btn-default\">Save</button>\n               </form>\n           </div>\n\n<!-- Description -->\n            <div class=\"form-under-tab\" if.bind=\"currentTab == 'Requirements'\">\n                <form role=\"form\" submit.delegate=\"signup()\">\n                    <div class=\"form-group\">\n                        <label for=\"name\">Requirements</label>\n                        <input type=\"text\" value.bind=\"name\" class=\"form-control\" id=\"name\" placeholder=\"Name\">\n                    </div>\n                    <button type=\"submit\" class=\"btn btn-default\">Signup</button>\n                </form>\n            </div>\n\n\n        </div>\n    </div>\n</template>"; });
 define('text!controllers/signup.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"panel panel-default center\" style=\"width: 400px;\">\n        <div class=\"panel-heading\">\n            <h3 class=\"panel-title\">Signup</h3>\n        </div>\n        <div class=\"panel-body\">\n            <form role=\"form\" submit.delegate=\"signup()\">\n                <div class=\"form-group\">\n                    <label for=\"email\">Name</label>\n                    <input type=\"text\" value.bind=\"name\" class=\"form-control\" id=\"name\" placeholder=\"Name\">\n                </div>\n                <div class=\"form-group\">\n                    <label for=\"email\">Email</label>\n                    <input type=\"text\" value.bind=\"email\" class=\"form-control\" id=\"email\" placeholder=\"Email\">\n                </div>\n                <div class=\"form-group\">\n                    <label for=\"password\">Password</label>\n                    <input type=\"password\" value.bind=\"password\" class=\"form-control\" id=\"password\" placeholder=\"Password\">\n                </div>\n                <button type=\"submit\" class=\"btn btn-default\">Signup</button>\n            </form>\n        </div>\n        <div class=\"panel-footer\" if.bind=\"showError\" style=\"color: #ee0701;\">${error}</div>\n    </div>\n</template>"; });
 define('text!controllers/test.html', ['module'], function(module) { module.exports = "<template>\n    test\n</template>\n"; });
 define('text!controllers/welcome.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"jumbotron\">\n        <h1>Hello, SolidTeam!</h1>\n        <p>Welcome to ZenBan - our new mega tracker.</p>\n    </div>\n</template>"; });

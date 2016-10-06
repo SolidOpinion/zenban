@@ -1,0 +1,51 @@
+<template>
+    <div class="panel panel-default center" style="width: 800px;">
+        <div class="panel-heading">
+            <h3 class="panel-title" if.bind="!isNewRequest" >Request</h3>
+            <h3 class="panel-title" if.bind="isNewRequest" >Create a new request</h3>
+            <div if.bind="showError" style="color: #ee0701;">${error}</div>
+        </div>
+        <div class="panel-body">
+            <ul class="nav nav-tabs">
+                <li role="presentation" class="${currentTab == 'Description' ? 'active' : ''}"><a href="#" click.delegate="switchTabTo('Description')">Description</a></li>
+
+                <li if.bind="!isNewRequest" role="presentation" class="${currentTab == 'Requirements' ? 'active' : ''}"><a href="#" click.delegate="switchTabTo('Requirements')">Requirements</a></li>
+                <li if.bind="!isNewRequest"  role="presentation" class="${currentTab == 'Tasks' ? 'active' : ''}"><a href="#" click.delegate="switchTabTo('Tasks')">Tasks</a></li>
+                <li if.bind="!isNewRequest"  role="presentation" class="${currentTab == 'People' ? 'active' : ''}"><a href="#" click.delegate="switchTabTo('People')">People</a></li>
+                <li if.bind="!isNewRequest"  role="presentation" class="${currentTab == 'Documentation' ? 'active' : ''}"><a href="#" click.delegate="switchTabTo('Documentation')">Documentation</a></li>
+                <li if.bind="!isNewRequest"  role="presentation" class="${currentTab == 'History' ? 'active' : ''}"><a href="#" click.delegate="switchTabTo('History')">History</a></li>
+            </ul>
+<!-- Description -->
+           <div class="form-under-tab" if.bind="currentTab == 'Description'">
+               <form role="form" submit.delegate="descriptionSave()">
+                   <div class="checkbox" align="right"  if.bind="!isNewRequest" >
+                       <label><input type="checkbox" value.bind="request.isProblem"> Request has a problem</label>
+                   </div>
+                   <div class="form-group">
+                       <label for="title">Title</label>
+                       <input type="text" value.bind="request.title" class="form-control" id="title">
+                   </div>
+                   <div class="form-group">
+                       <label for="title">Description</label>
+                       <textarea class="form-control" rows="8" value.bind="request.description" id="description"></textarea>
+                       <span if.bind="!isNewRequest" style="color: gray;">by ${request.author} on ${request.creation_date}</span>
+                   </div>
+                   <button type="submit" class="btn btn-default">Save</button>
+               </form>
+           </div>
+
+<!-- Description -->
+            <div class="form-under-tab" if.bind="currentTab == 'Requirements'">
+                <form role="form" submit.delegate="signup()">
+                    <div class="form-group">
+                        <label for="name">Requirements</label>
+                        <input type="text" value.bind="name" class="form-control" id="name" placeholder="Name">
+                    </div>
+                    <button type="submit" class="btn btn-default">Signup</button>
+                </form>
+            </div>
+
+
+        </div>
+    </div>
+</template>
