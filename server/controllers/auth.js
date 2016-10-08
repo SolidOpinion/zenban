@@ -1,6 +1,6 @@
 'use strict';
 var User = require('../models/user');
-var Auth = require('../models/auth');
+var Auth = require('../libs/auth');
 var router = require('express').Router();
 var config = require('../config.json')[process.env.NODE_ENV || 'dev'];
 var log4js = require('log4js');
@@ -30,7 +30,31 @@ router.post('/auth', function(req, res, next) {
 
 });
 
-
+router.get('/auth', function(req, res, next) {
+    Auth.getUserByToken(req.header('Authorization'))
+        .then(userId => {
+            User.where({ _id: userId, isRemoved: false }).findOne(function (err, user) {
+                if (err) {
+                    res.sendStatus(401);
+                    next();
+                } else {
+                    if (user == null) {
+                        res.sendStatus(401);
+                        next();
+                    } else {
+                        user.password = undefined;
+                        res.json(user);
+                        next();
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            logger.error(error);
+            res.sendStatus(401);
+            next();
+        })
+});
 
 module.exports = router;
 

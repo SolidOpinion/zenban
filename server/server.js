@@ -33,23 +33,34 @@ app.use(function(req, res, next) {
     }
 });
 
-var Auth = require('./models/auth');
+var Auth = require('./libs/auth');
+var User = require('./models/user');
 
 app.use(function(req, res, next) {
     if (!req.header('Test')) {
         logger.info("Enter auth middleware");
-        if (req.path == '/api/auth' || (req.path == '/api/user' && req.method == 'POST')) {
+        if ((req.path == '/api/auth' && req.method == 'POST') || (req.path == '/api/users' && req.method == 'POST')) {
             logger.info(req.path + " route is not protected");
             next();
         } else {
             if (req.header('Authorization')) {
                 logger.info("we have Authorization header for this request " + req.header('Authorization'));
                 Auth.getUserByToken(req.header('Authorization'))
-                    .then(user => {
-                        logger.info("auth ok we can continue to route handler");
-                        //res.json(user);
-                        // auth ok
-                        next();
+                    .then(userId => {
+                        User.where({ _id: userId, isRemoved: false }).findOne(function (err, user) {
+                            if (err) {
+                                res.sendStatus(401);
+                                next();
+                            } else {
+                                if (user == null) {
+                                    res.sendStatus(401);
+                                    next();
+                                } else {
+                                    logger.info("auth ok we can continue to route handler");
+                                    next();
+                                }
+                            }
+                        });
                     })
                     .catch(error => {
                         logger.info("auth failed => exit ");
@@ -72,25 +83,19 @@ var router = express.Router();
 var taskRoutes = require('./controllers/task');
 app.use('/api', taskRoutes);
 
-var commentRoutes = require('./controllers/comment');
-app.use('/api', commentRoutes);
-
-var requestRoutes = require('./controllers/request');
-app.use('/api', requestRoutes);
-
-var requirementRoutes = require('./controllers/requirement');
-app.use('/api', requirementRoutes);
 */
 
-var userRoutes = require('./controllers/user');
-app.use('/api', userRoutes);
+var requestsRoutes = require('./controllers/requests');
+app.use('/api', requestsRoutes);
+
+var requirementsRoutes = require('./controllers/requirements');
+app.use('/api', requirementsRoutes);
+
+var usersRoutes = require('./controllers/users');
+app.use('/api', usersRoutes);
 
 var authRoutes = require('./controllers/auth');
 app.use('/api', authRoutes);
-
-var testRoutes = require('./controllers/test');
-app.use('/api', testRoutes);
-
 
 app.listen(app.get('port'), function() {
     logger.info('ZenBan API is running on port', app.get('port'));

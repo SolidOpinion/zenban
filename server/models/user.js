@@ -30,6 +30,10 @@ var UserSchema = mongoose.Schema({
         type: String,
         enum: ['internal', 'external']
     },
+    isRemoved: {
+        type: Boolean,
+        default: false
+    },
     createdAt: {
         type: Date,
         default: Date.now

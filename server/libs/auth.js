@@ -2,7 +2,7 @@
 var moment = require('moment');
 var jwt = require('jwt-simple');
 var config = require('../config.json')[process.env.NODE_ENV || 'dev'];
-var User = require('./user');
+var User = require('../models/user');
 
 module.exports = {
 
@@ -31,16 +31,8 @@ module.exports = {
             if (userId == null) {
                 reject();
             }
-            User.findOne({ _id: userId })
-                .exec(function (err, user) {
-                    if (err) {
-                        reject();
-                    }
-                    user.password = undefined;
-                    resolve(user)
-                });
+            resolve(userId);
         });
-
     }
 };
 

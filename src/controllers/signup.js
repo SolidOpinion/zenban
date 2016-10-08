@@ -1,30 +1,31 @@
 import {inject} from 'aurelia-framework';
 import {Rest} from "../models/rest";
-import {Auth} from '../models/auth';
 import {Router} from "aurelia-router";
 
-
-@inject(Rest, Auth, Router)
+@inject(Rest, Router)
 export class Signup {
 
     email = '';
     name = '';
     password = '';
 
-    constructor(rest, auth, router) {
+    constructor(rest, router) {
         this.rest = rest;
-        this.auth = auth;
         this.router = router;
         this.error = '';
     };
 
     signup() {
-        this.rest.create('user', { name: this.name, email: this.email, password: this.password })
+        this.rest
+            .create('users', {
+                name: this.name,
+                email: this.email,
+                password: this.password
+            })
             .then(response => {
                 this.router.navigate('#/login');
             })
             .catch(error => {
-                console.log(error);
                 this.error = error.message;
             });
     };

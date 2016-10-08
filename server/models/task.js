@@ -17,6 +17,11 @@ var TaskSchema = mongoose.Schema({
         minlength: 0,
         maxlength: 3000
     },
+    type: {
+        type: String,
+        required: true,
+        enum: ['task', 'bug', 'tech']
+    },
     status: {
         type: String,
         required: true,
@@ -34,6 +39,10 @@ var TaskSchema = mongoose.Schema({
     isProblem: {
         type: Boolean,
         default: false
+    },
+    requestId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Request'
     },
     authorUserId: {
         type: Schema.Types.ObjectId,

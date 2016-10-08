@@ -31,28 +31,28 @@ var RequestSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
-    authorUserId: {
-        type: Schema.Types.ObjectId,
+    author: {
+        type: Number,
         ref: 'User'
     },
-    poUserId: {
-        type: Schema.Types.ObjectId,
+    po: {
+        type: Number,
         ref: 'User'
     },
-    architectUserId: {
-        type: Schema.Types.ObjectId,
+    architect: {
+        type: Number,
         ref: 'User'
     },
-    qaUserId: {
-        type: Schema.Types.ObjectId,
+    qa: {
+        type: Number,
         ref: 'User'
     },
-    opsUserId: {
-        type: Schema.Types.ObjectId,
+    ops: {
+        type: Number,
         ref: 'User'
     },
     requirements: [{
-        type: Schema.Types.ObjectId,
+        type: Number,
         ref: 'Requirement'
     }],
     comments: [{
@@ -62,8 +62,8 @@ var RequestSchema = mongoose.Schema({
             minlength: 3,
             maxlength: 3000
         },
-        authorUserId: {
-            type: Schema.Types.ObjectId,
+        author: {
+            type: Number,
             ref: 'User'
         },
         isRemoved: {
@@ -82,8 +82,8 @@ var RequestSchema = mongoose.Schema({
             minlength: 3,
             maxlength: 3000
         },
-        authorUserId: {
-            type: Schema.Types.ObjectId,
+        author: {
+            type: Number,
             ref: 'User'
         },
         createdAt: {

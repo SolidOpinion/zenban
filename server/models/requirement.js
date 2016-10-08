@@ -11,8 +11,8 @@ var RequirementSchema = mongoose.Schema({
         minlength: 3,
         maxlength: 50
     },
-    parentId: {
-        type: Schema.Types.ObjectId,
+    parent: {
+        type: Number,
         ref: 'Requirement'
     },
     isRemoved: {

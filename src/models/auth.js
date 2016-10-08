@@ -41,7 +41,7 @@ export class Auth {
         });
 
         this.http
-            .get(environment.api + "/api/user")
+            .get(environment.api + "/api/auth")
             .then(response => {
                 console.log(response);
                 this.user = response.content;

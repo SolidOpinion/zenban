@@ -1,10 +1,10 @@
 'use strict';
 var router = require('express').Router();
 var User = require('../models/user');
-var Auth = require('../models/auth');
+var Auth = require('../libs/auth');
 
 
-router.post('/user', function(req, res, next) {
+router.post('/users', function(req, res, next) {
 
     var user = new User();
 
@@ -35,20 +35,28 @@ router.post('/user', function(req, res, next) {
 });
 
 
-router.get('/user', function(req, res, next) {
-    console.log("enter /user");
-    Auth.getUserByToken(req.header('Authorization'))
-        .then(user => {
-            console.log("ok /user");
-            res.json(user);
-            next();
-        })
-        .catch(error => {
-            console.log("error /user");
-            res.sendStatus(401);
-            next();
-        })
+// list
+router.get('/users', function(req, res, next) {
+    let search = {};
+
+    if (req.query && req.query.name && req.query.name.length > 0) {
+        search = { "name": {"$regex": req.query.name, "$options": "i"}, "isRemoved": false };
+    } else {
+        search = { "isRemoved": false };
+    }
+
+    User
+        .find(search)
+        .select('name _id')
+        .exec(function (err, results) {
+            if (err) {
+                res.sendStatus(500);
+                return next();
+            }
+            res.json(results);
+        });
 });
+
 
 
 module.exports = router;
