@@ -8,12 +8,12 @@ var Requirement = require('../models/requirement');
 
 chai.use(chaiHttp);
 
-describe("requirement, ", function() {
+describe.skip("requirement, ", function() {
     this.timeout(10000);
 
     beforeEach(function (done) {
         // remove all users before each test
-        Requirement.remove().exec().then(function(d) {
+        Requirement.remove().exec().then(function() {
             done();
         });
     });

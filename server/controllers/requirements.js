@@ -82,7 +82,7 @@ router.get('/requirements/:id', function(req, res, next) {
 
 // list
 router.get('/requirements', function(req, res, next) {
-    let search = {};
+    let search;
 
     if (req.query && req.query.title && req.query.title.length > 0) {
         search = { "title": {"$regex": req.query.title, "$options": "i"}, "isRemoved": false };

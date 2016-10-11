@@ -37,7 +37,7 @@ router.post('/users', function(req, res, next) {
 
 // list
 router.get('/users', function(req, res, next) {
-    let search = {};
+    let search;
 
     if (req.query && req.query.name && req.query.name.length > 0) {
         search = { "name": {"$regex": req.query.name, "$options": "i"}, "isRemoved": false };

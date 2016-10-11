@@ -37,43 +37,40 @@ var Auth = require('./libs/auth');
 var User = require('./models/user');
 
 app.use(function(req, res, next) {
-    if (!req.header('Test')) {
-        logger.info("Enter auth middleware");
-        if ((req.path == '/api/auth' && req.method == 'POST') || (req.path == '/api/users' && req.method == 'POST')) {
-            logger.info(req.path + " route is not protected");
-            next();
-        } else {
-            if (req.header('Authorization')) {
-                logger.info("we have Authorization header for this request " + req.header('Authorization'));
-                Auth.getUserByToken(req.header('Authorization'))
-                    .then(userId => {
-                        User.where({ _id: userId, isRemoved: false }).findOne(function (err, user) {
-                            if (err) {
-                                res.sendStatus(401);
-                                next();
-                            } else {
-                                if (user == null) {
-                                    res.sendStatus(401);
-                                    next();
-                                } else {
-                                    logger.info("auth ok we can continue to route handler");
-                                    next();
-                                }
-                            }
-                        });
-                    })
-                    .catch(error => {
-                        logger.info("auth failed => exit ");
-                        res.sendStatus(401);
-                    })
-            } else {
-                logger.info("we dont have auth header for protected route");
-                res.sendStatus(401);
-            }
-        }
-    } else {
-        next();
+    if (req.header('Test')) {
+        logger.info("Skip auth for test");
+        return next();
     }
+    if ((req.path == '/api/auth' && req.method == 'POST') || (req.path == '/api/users' && req.method == 'POST')) {
+        logger.info(req.path + " route is not protected");
+        return next();
+    }
+    if (!req.header('Authorization')) {
+        logger.info("we dont have auth header for protected route");
+        res.sendStatus(401);
+    }
+    logger.info("We have Authorization header for this request " + req.header('Authorization'));
+    Auth.getUserByToken(req.header('Authorization'))
+        .then(userId => {
+            User.where({ _id: userId, isRemoved: false }).findOne(function (err, user) {
+                if (err) {
+                    res.sendStatus(401);
+                    next();
+                } else {
+                    if (user == null) {
+                        res.sendStatus(401);
+                        next();
+                    } else {
+                        logger.info("auth ok we can continue to route handler");
+                        next();
+                    }
+                }
+            });
+        })
+        .catch(function() {
+            logger.info("auth failed => exit ");
+            res.sendStatus(401);
+        })
 });
 
 
