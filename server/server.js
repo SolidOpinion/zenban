@@ -39,6 +39,8 @@ var User = require('./models/user');
 app.use(function(req, res, next) {
     if (req.header('Test')) {
         logger.info("Skip auth for test");
+        req.user = {};
+        req.user._id = req.header('Test');
         return next();
     }
     if ((req.path == '/api/auth' && req.method == 'POST') || (req.path == '/api/users' && req.method == 'POST')) {
@@ -61,6 +63,7 @@ app.use(function(req, res, next) {
                         res.sendStatus(401);
                         next();
                     } else {
+                        req.user = user;
                         logger.info("auth ok we can continue to route handler");
                         next();
                     }
@@ -76,11 +79,9 @@ app.use(function(req, res, next) {
 
 var router = express.Router();
 
-/*
-var taskRoutes = require('./controllers/task');
-app.use('/api', taskRoutes);
 
-*/
+var tasksRoutes = require('./controllers/tasks');
+app.use('/api', tasksRoutes);
 
 var requestsRoutes = require('./controllers/requests');
 app.use('/api', requestsRoutes);

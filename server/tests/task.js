@@ -6,23 +6,24 @@ var server = require('../server');
 
 var Request = require('../models/request');
 var User = require('../models/user');
-
+var Task = require('../models/task');
 
 chai.use(chaiHttp);
 
-describe("request, ", function() {
+describe("task, ", function() {
     this.timeout(10000);
 
     var authorId;
+    var requestId;
 
-    function createRequest(title, description) {
+    function createTask(title, description) {
         return chai.request(server)
-        .post('/api/requests')
-        .set('Test', authorId)
-        .send({
-            title: title,
-            description: description
-        });
+            .post('/api/tasks')
+            .set('Test', authorId)
+            .send({
+                title: title,
+                description: description
+            });
     }
 
     function modifyRequest(id, body) {
@@ -223,21 +224,21 @@ describe("request, ", function() {
 
     it("hides closed", function(done) {
         createRequest('Login problems', 'My login doesnt work as expected')
-        .end(function(err, res) {
-            createRequest('Signup problems', 'My signup doesnt work as expected')
             .end(function(err, res) {
-                modifyRequest(res.body._id, { 'status': 'Closed' })
+                createRequest('Signup problems', 'My signup doesnt work as expected')
                     .end(function(err, res) {
-                        chai.request(server)
-                            .get('/api/requests')
-                            .set('Test', authorId)
+                        modifyRequest(res.body._id, { 'status': 'Closed' })
                             .end(function(err, res) {
-                                res.should.have.property('body').with.lengthOf(1).and.be.instanceof(Array);
-                                done();
+                                chai.request(server)
+                                    .get('/api/requests')
+                                    .set('Test', authorId)
+                                    .end(function(err, res) {
+                                        res.should.have.property('body').with.lengthOf(1).and.be.instanceof(Array);
+                                        done();
+                                    });
                             });
                     });
             });
-        });
     });
 
     it("shows closed for archive", function(done) {

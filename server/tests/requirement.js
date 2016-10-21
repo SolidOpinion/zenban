@@ -13,7 +13,7 @@ describe.skip("requirement, ", function() {
 
     beforeEach(function (done) {
         // remove all users before each test
-        Requirement.remove().exec().then(function() {
+        Requirement.remove().exec().then(function(d) {
             done();
         });
     });

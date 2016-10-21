@@ -11,25 +11,26 @@ logger.setLevel(config.LOG_LEVEL);
 
 
 // create
-router.post('/requests', function(req, res, next) {
-    var request = new Request(req.body);
-    request.status = 'New requests';
-    request.position = 1000; // move request to the end
-    request.author = req.user._id;
+router.post('/tasks', function(req, res, next) {
+    var task = new Request(req.body);
+    task.status = 'Backlog';
+    task.author = req.user._id;
+    task.estimation = 0;
+    task.isProblem = false;
 
-    logger.info(request);
+    logger.info(task);
 
-    request.save(function (err) {
+    task.save(function (err) {
         if (err) {
             logger.error(err);
             res.status(406).json({ message: "Model validation error" });
             next();
         } else {
-            res.json(request);
+            res.json(task);
         }
     });
 });
-
+/*
 // modify
 router.put('/requests/:id', function(req, res, next) {
     Request.findByIdAndUpdate(req.params.id, { $set: req.body}, function (err, request) {
@@ -199,7 +200,7 @@ router.delete('/requests/:id/comments/:cid', function(req, res, next) {
         }
     });
 });
-
+*/
 module.exports = router;
 
 

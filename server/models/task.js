@@ -27,11 +27,6 @@ var TaskSchema = mongoose.Schema({
         required: true,
         enum: ['Backlog', 'In progress', 'Done']
     },
-    position: {
-        type: Number,
-        required: true,
-        min: 0
-    },
     estimation: {
         type: Number,
         enum: [0, 1, 2, 3, 5, 8, 13]
@@ -40,16 +35,17 @@ var TaskSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
-    requestId: {
+    request: {
         type: Schema.Types.ObjectId,
+        required: true,
         ref: 'Request'
     },
-    authorUserId: {
+    author: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: 'User'
     },
-    responsiveUserId: {
+    developer: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
@@ -59,7 +55,6 @@ var TaskSchema = mongoose.Schema({
     },
     tags: [{
         type: String,
-        required: true,
         minlength: 3,
         maxlength: 100
     }],
@@ -70,8 +65,8 @@ var TaskSchema = mongoose.Schema({
             minlength: 3,
             maxlength: 3000
         },
-        authorUserId: {
-            type: Schema.Types.ObjectId,
+        author: {
+            type: Number,
             ref: 'User'
         },
         isRemoved: {
@@ -90,8 +85,8 @@ var TaskSchema = mongoose.Schema({
             minlength: 3,
             maxlength: 3000
         },
-        authorUserId: {
-            type: Schema.Types.ObjectId,
+        author: {
+            type: Number,
             ref: 'User'
         },
         createdAt: {
