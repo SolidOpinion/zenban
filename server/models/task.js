@@ -13,7 +13,6 @@ var TaskSchema = mongoose.Schema({
     },
     description: {
         type: String,
-        required: true,
         minlength: 0,
         maxlength: 3000
     },
@@ -36,21 +35,21 @@ var TaskSchema = mongoose.Schema({
         default: false
     },
     request: {
-        type: Schema.Types.ObjectId,
+        type: Number,
         required: true,
         ref: 'Request'
     },
     author: {
-        type: Schema.Types.ObjectId,
+        type: Number,
         required: true,
         ref: 'User'
     },
     developer: {
-        type: Schema.Types.ObjectId,
+        type: Number,
         ref: 'User'
     },
     dependsOn: {
-        type: Schema.Types.ObjectId,
+        type: Number,
         ref: 'Task'
     },
     tags: [{

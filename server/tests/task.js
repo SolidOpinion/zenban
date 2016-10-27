@@ -26,29 +26,6 @@ describe("task, ", function() {
             });
     }
 
-    function modifyRequest(id, body) {
-        return chai.request(server)
-            .put('/api/requests/' + id)
-            .set('Test', authorId)
-            .send(body);
-    }
-
-    function addComment(body, id) {
-        return chai.request(server)
-            .post('/api/requests/' + id + '/comments')
-            .set('Test', authorId)
-            .send({
-                body: body
-            });
-    }
-
-    function removeComment(id, cid) {
-        return chai.request(server)
-            .delete('/api/requests/' + id + '/comments/' + cid)
-            .set('Test', authorId);
-    }
-
-
     beforeEach(function (done) {
         // remove all users before each test
         Request.remove().exec().then(function() {
@@ -62,7 +39,17 @@ describe("task, ", function() {
                     })
                     .end(function(err, res) {
                         authorId = res.body._id;
-                        done();
+                        chai.request(server)
+                            .post('/api/requests')
+                            .set('Test', authorId)
+                            .send({
+                                title: 'New signup request',
+                                description: 'Integrate facebook signup'
+                            })
+                            .end(function(err, res) {
+                                requestId = res.body._id;
+                                done();
+                            });
                     });
             });
         });
@@ -71,23 +58,24 @@ describe("task, ", function() {
 
     it("can be created", function(done) {
         chai.request(server)
-            .post('/api/requests')
+            .post('/api/tasks')
             .set('Test', authorId)
             .send({
-                title: 'Login problems',
-                description: 'My login doesnt work as expected'
+                title: 'Cleanup code',
+                type: 'tech',
+                request: requestId
             })
             .end(function(err, res) {
                 res.should.have.status(200);
                 chai.request(server)
-                    .get('/api/requests/' + res.body._id)
+                    .get('/api/tasks/' + res.body._id)
                     .set('Test', authorId)
                     .end(function(err, res) {
                         res.should.have.status(200);
-                        res.body.title.should.equal('Login problems');
-                        res.body.description.should.equal('My login doesnt work as expected');
-                        res.body.status.should.equal('New requests');
-                        res.body.position.should.equal(1000);
+                        res.body.title.should.equal('Cleanup code');
+                        res.body.status.should.equal('Backlog');
+                        res.body.type.should.equal('tech');
+                        res.body.estimation.should.equal(0);
                         res.body.isRemoved.should.equal(false);
                         res.body.isProblem.should.equal(false);
                         res.body.should.have.property('createdAt');
@@ -97,10 +85,10 @@ describe("task, ", function() {
                     });
             });
     });
-
+/*
     it("can be modified", function(done) {
         chai.request(server)
-            .post('/api/requests')
+            .post('/api/tasks')
             .set('Test', authorId)
             .send({
                 title: 'Login problems',
@@ -137,7 +125,8 @@ describe("task, ", function() {
                     });
             });
     });
-
+*/
+    /*
     it("can be removed", function(done) {
         chai.request(server)
             .post('/api/requests')
@@ -294,6 +283,6 @@ describe("task, ", function() {
             });
         });
     });
-
+*/
 });
 

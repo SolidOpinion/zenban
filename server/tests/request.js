@@ -10,7 +10,7 @@ var User = require('../models/user');
 
 chai.use(chaiHttp);
 
-describe("request, ", function() {
+describe.skip("request, ", function() {
     this.timeout(10000);
 
     var authorId;

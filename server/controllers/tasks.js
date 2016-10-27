@@ -1,6 +1,8 @@
 'use strict';
 var router = require('express').Router();
+var Task = require('../models/task');
 var Request = require('../models/request');
+var User = require('../models/user');
 var config = require('../config.json')[process.env.NODE_ENV || 'dev'];
 var log4js = require('log4js');
 var Auth = require('../libs/auth');
@@ -12,7 +14,8 @@ logger.setLevel(config.LOG_LEVEL);
 
 // create
 router.post('/tasks', function(req, res, next) {
-    var task = new Request(req.body);
+
+    var task = new Task(req.body);
     task.status = 'Backlog';
     task.author = req.user._id;
     task.estimation = 0;
@@ -30,28 +33,28 @@ router.post('/tasks', function(req, res, next) {
         }
     });
 });
-/*
+
 // modify
-router.put('/requests/:id', function(req, res, next) {
-    Request.findByIdAndUpdate(req.params.id, { $set: req.body}, function (err, request) {
+router.put('/tasks/:id', function(req, res, next) {
+    Task.findByIdAndUpdate(req.params.id, { $set: req.body}, function (err, task) {
         if (err) {
             res.status(406).json({ message: "Model validation error" });
             return next();
         } else {
-            if (request == null) {
+            if (task == null) {
                 res.sendStatus(404);
                 return next();
             }
-            Request.where({ _id:req.params.id }).findOne(function (err, requestResult) {
+            Task.where({ _id:req.params.id }).findOne(function (err, taskResult) {
                 if (err) {
                     res.sendStatus(500);
                     return next();
                 } else {
-                    if (requestResult == null) {
+                    if (taskResult == null) {
                         res.sendStatus(500);
                         return next();
                     } else {
-                        res.json(requestResult);
+                        res.json(taskResult);
                     }
                 }
             });
@@ -60,37 +63,44 @@ router.put('/requests/:id', function(req, res, next) {
 });
 
 // delete
-router.delete('/requests/:id', function(req, res, next) {
-    Request.findByIdAndUpdate(req.params.id, { $set: { isRemoved: true }}, function (err, request) {
+router.delete('/tasks/:id', function(req, res, next) {
+    Task.findByIdAndUpdate(req.params.id, { $set: { isRemoved: true }}, function (err, task) {
         if (err) {
             res.status(406).json({ message: "Can't remove" });
             return next();
         } else {
-            res.json({_id: request._id});
+            res.json({_id: task._id});
         }
     });
 });
 
 // get
-router.get('/requests/:id', function(req, res, next) {
-    Request.findOne({ _id:req.params.id, isRemoved: false })
+router.get('/tasks/:id', function(req, res, next) {
+    Task.findOne({ _id:req.params.id, isRemoved: false })
         .populate('author', 'name _id')
-        .populate('comments.author', 'name _id')
-        .exec(function (err, request) {
+        .populate('request', 'createdAt title author _id')
+        .exec(function (err, task) {
             if (err) {
                 res.sendStatus(500);
                 return next();
             } else {
-                if (request == null) {
+                if (task == null) {
                     res.sendStatus(404);
                     return next();
                 } else {
-                    res.json(request);
+                    Request.populate(task, {
+                        path: 'request.author',
+                        select: 'name _id',
+                        model: User
+                    }, function (err, task) {
+                        res.json(task);
+                    });
                 }
             }
         });
 });
 
+/*
 // list
 router.get('/requests', function(req, res, next) {
     let search = {};
