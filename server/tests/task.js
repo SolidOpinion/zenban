@@ -16,13 +16,14 @@ describe("task, ", function() {
     var authorId;
     var requestId;
 
-    function createTask(title, description) {
+    function createTask(title, type, request) {
         return chai.request(server)
             .post('/api/tasks')
             .set('Test', authorId)
             .send({
                 title: title,
-                description: description
+                type: type,
+                request: request
             });
     }
 
@@ -85,36 +86,38 @@ describe("task, ", function() {
                     });
             });
     });
-/*
+
     it("can be modified", function(done) {
         chai.request(server)
             .post('/api/tasks')
             .set('Test', authorId)
             .send({
-                title: 'Login problems',
-                description: 'My login doesnt work as expected'
+                title: 'Cleanup code',
+                type: 'tech',
+                request: requestId
             })
             .end(function(err, res1) {
                 chai.request(server)
-                    .put('/api/requests/' + res1.body._id)
+                    .put('/api/tasks/' + res1.body._id)
                     .set('Test', authorId)
                     .send({
-                        title: 'Signup problems',
-                        description: 'My signup doesnt work as expected',
+                        title: 'Edited cleanup code',
+                        description: 'Edited my signup doesnt work as expected',
                         isProblem: true,
-                        status: 'Waiting for architect'
+                        status: 'In progress',
+                        estimation: 2,
+                        tags: ['tag1', 'tag2']
                     })
                     .end(function(err, res) {
                         res.should.have.status(200);
                         chai.request(server)
-                            .get('/api/requests/' + res.body._id)
+                            .get('/api/tasks/' + res.body._id)
                             .set('Test', authorId)
                             .end(function(err, res) {
                                 res.should.have.status(200);
-                                res.body.title.should.equal('Signup problems');
-                                res.body.description.should.equal('My signup doesnt work as expected');
-                                res.body.status.should.equal('Waiting for architect');
-                                res.body.position.should.equal(1000);
+                                res.body.title.should.equal('Edited cleanup code');
+                                res.body.description.should.equal('Edited my signup doesnt work as expected');
+                                res.body.status.should.equal('In progress');
                                 res.body.isRemoved.should.equal(false);
                                 res.body.isProblem.should.equal(true);
                                 res.body.should.have.property('createdAt');
@@ -125,24 +128,25 @@ describe("task, ", function() {
                     });
             });
     });
-*/
-    /*
+
+
     it("can be removed", function(done) {
         chai.request(server)
-            .post('/api/requests')
+            .post('/api/tasks')
             .set('Test', authorId)
             .send({
-                title: 'Login problems',
-                description: 'My login doesnt work as expected'
+                title: 'Cleanup code',
+                type: 'tech',
+                request: requestId
             })
             .end(function(err, res1) {
                 chai.request(server)
-                    .delete('/api/requests/' + res1.body._id)
+                    .delete('/api/tasks/' + res1.body._id)
                     .set('Test', authorId)
                     .end(function(err, res) {
                         res.should.have.status(200);
                         chai.request(server)
-                            .get('/api/requests/' + res.body._id)
+                            .get('/api/tasks/' + res.body._id)
                             .set('Test', authorId)
                             .end(function(err, res) {
                                 res.should.have.status(404);
@@ -152,65 +156,56 @@ describe("task, ", function() {
             });
     });
 
+
     it("can be returned as a list", function(done) {
-        chai.request(server)
-            .post('/api/requests')
-            .set('Test', authorId)
-            .send({
-                title: 'Login problems',
-                description: 'My login doesnt work as expected'
-            })
-            .end(function() {
+        createTask('Tech task 1', 'tech', requestId).end(function(err, res1) {
+            createTask('Bug 2', 'bug', requestId).end(function(err, res2) {
                 chai.request(server)
-                    .post('/api/requests')
+                    .put('/api/tasks/' + res1.body._id)
                     .set('Test', authorId)
                     .send({
-                        title: 'Signup problems',
-                        description: 'My signup doesnt work as expected'
+                        developer: authorId,
+                        isProblem: true,
+                        tags: ['tag1', 'tag2'],
+                        dependsOn: res1.body._id
                     })
                     .end(function(err, res) {
                         res.should.have.status(200);
                         chai.request(server)
-                            .get('/api/requests')
+                            .get('/api/tasks')
                             .set('Test', authorId)
+                            .query({
+                                title: 'Tech',
+                                request: requestId,
+                                type: 'tech',
+                                developer: authorId,
+                                tag: 'tag1',
+                                isProblem: true,
+                                dependend: true
+                            })
                             .end(function(err, res) {
-                                res.should.have.property('body').with.lengthOf(2).and.be.instanceof(Array);
+                                res.should.have.status(200);
+                                res.body.should.be.instanceof(Array).and.have.lengthOf(1);
+                                var task = res.body[0];
+                                task.title.should.equal('Tech task 1');
+                                task.status.should.equal('Backlog');
+                                task.isRemoved.should.equal(false);
+                                task.isProblem.should.equal(true);
+                                task.should.have.property('createdAt');
+                                task.should.have.property('author').and.be.instanceof(Object);
+                                task.author.name.should.equal('nick');
+                                task.request.author.name.should.equal('nick');
                                 done();
                             });
                     });
             });
+        });
     });
 
-    it("can be filtered by a title", function(done) {
-        chai.request(server)
-            .post('/api/requests')
-            .set('Test', authorId)
-            .send({
-                title: 'Login problems',
-                description: 'My login doesnt work as expected'
-            })
-            .end(function() {
-                chai.request(server)
-                    .post('/api/requests')
-                    .set('Test', authorId)
-                    .send({
-                        title: 'Signup problems',
-                        description: 'My signup doesnt work as expected'
-                    })
-                    .end(function(err, res) {
-                        res.should.have.status(200);
-                        chai.request(server)
-                            .get('/api/requests')
-                            .query({ title: 'Signup' })
-                            .set('Test', authorId)
-                            .end(function(err, res) {
-                                res.should.have.property('body').with.lengthOf(1).and.be.instanceof(Array);
-                                done();
-                            });
-                    });
-            });
-    });
 
+
+
+/*
     it("hides closed", function(done) {
         createRequest('Login problems', 'My login doesnt work as expected')
             .end(function(err, res) {

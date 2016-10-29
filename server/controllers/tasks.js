@@ -54,6 +54,7 @@ router.put('/tasks/:id', function(req, res, next) {
                         res.sendStatus(500);
                         return next();
                     } else {
+                        logger.info(taskResult);
                         res.json(taskResult);
                     }
                 }
@@ -78,6 +79,7 @@ router.delete('/tasks/:id', function(req, res, next) {
 router.get('/tasks/:id', function(req, res, next) {
     Task.findOne({ _id:req.params.id, isRemoved: false })
         .populate('author', 'name _id')
+        .populate('developer', 'name _id')
         .populate('request', 'createdAt title author _id')
         .exec(function (err, task) {
             if (err) {
@@ -100,9 +102,10 @@ router.get('/tasks/:id', function(req, res, next) {
         });
 });
 
-/*
+
 // list
-router.get('/requests', function(req, res, next) {
+router.get('/tasks', function(req, res, next) {
+
     let search = {};
 
     search.isRemoved = false;
@@ -113,35 +116,69 @@ router.get('/requests', function(req, res, next) {
         search.title.$options = 'i';
     }
 
-    if (req.query &&
-        req.query.author &&
-        !isNaN(parseFloat(req.query.author)) &&
-        isFinite(req.query.author)
-    ) {
-        search.author = req.query.author;
+
+    if (req.query && req.query.tag && req.query.tag.length > 0) {
+        search.tags = {};
+        search.tags = req.query.tag;
     }
 
-    if (req.query && !req.query.showArchive
-    ) {
-        search.status = {};
-        search.status.$ne = 'Closed';
+    if (req.query && req.query.developer && !isNaN(parseFloat(req.query.developer)) && isFinite(req.query.developer)) {
+        search.developer = req.query.developer;
     }
 
+    if (req.query && req.query.request && !isNaN(parseFloat(req.query.request)) && isFinite(req.query.request)) {
+        search.request = req.query.request;
+    }
 
-    Request
+    if (req.query && req.query.type) {
+        search.type = req.query.type;
+    }
+
+    if (req.query && req.query.isProblem) {
+        search.isProblem = req.query.isProblem;
+    }
+
+    if (req.query && req.query.dependend) {
+        search.dependsOn = {};
+        search.dependsOn.$exists = true;
+        search.dependsOn.$ne = null;
+    }
+
+    console.log(search);
+
+    Task
         .find(search)
         .populate('author', 'name _id')
-        .populate('comments.author', 'name _id')
+        .populate('developer', 'name _id')
+        .populate('request', 'createdAt title author _id')
         .exec(function (err, results) {
             if (err) {
                 res.sendStatus(500);
                 return next();
             }
-            res.json(results);
+            let promiseArray = [];
+            if (results.length < 1) {
+                res.json([]);
+                return next();
+            }
+            results.forEach(function (value, key) {
+                promiseArray.push(Request.populate(value, {
+                    path: 'request.author',
+                    select: 'name _id',
+                    model: User
+                }).then(function (task) {
+                    results[key] = task;
+                }));
+            });
+
+            Promise.all(promiseArray)
+                .then(function() {
+                    res.json(results);
+                });
         });
 });
 
-
+/*
 // post comment
 router.post('/requests/:id/comments', function(req, res, next) {
     Request.findByIdAndUpdate(req.params.id, {
