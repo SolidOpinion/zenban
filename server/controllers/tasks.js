@@ -110,6 +110,8 @@ router.get('/tasks', function(req, res, next) {
 
     search.isRemoved = false;
 
+    //TODO: filter all tasks where request is not in progress or done
+
     if (req.query && req.query.title && req.query.title.length > 0) {
         search.title = {};
         search.title.$regex = req.query.title;
@@ -144,8 +146,6 @@ router.get('/tasks', function(req, res, next) {
         search.dependsOn.$ne = null;
     }
 
-    console.log(search);
-
     Task
         .find(search)
         .populate('author', 'name _id')
@@ -173,6 +173,9 @@ router.get('/tasks', function(req, res, next) {
 
             Promise.all(promiseArray)
                 .then(function() {
+
+
+
                     res.json(results);
                 });
         });
