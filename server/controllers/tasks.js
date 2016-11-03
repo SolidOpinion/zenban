@@ -106,6 +106,24 @@ router.get('/tasks/:id', function(req, res, next) {
 // list
 router.get('/tasks', function(req, res, next) {
 
+    Request
+        .find({ status: { '$in' : ['In progress', 'Done']} })
+        .populate('author', 'name _id')
+        .exec(function (err, requests) {
+            if (err) {
+                res.sendStatus(500);
+                return next();
+            }
+            if (requests.length < 1) {
+                res.json([]);
+                return next();
+            }
+            res.json(requests);
+
+        });
+
+/*
+
     let search = {};
 
     search.isRemoved = false;
@@ -179,6 +197,8 @@ router.get('/tasks', function(req, res, next) {
                     res.json(results);
                 });
         });
+
+*/
 });
 
 /*
