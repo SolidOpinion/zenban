@@ -4,7 +4,7 @@ var should = chai.should();
 var config = require('../config.json')['dev'];
 var server = require('../server');
 
-var call = require('./common')
+var call = require('./common');
 
 var Request = require('../models/request');
 var User = require('../models/user');
@@ -14,7 +14,7 @@ var Task = require('../models/task');
 
 chai.use(chaiHttp);
 
-describe("task, ", function() {
+describe.skip("task, ", function() {
     this.timeout(10000);
 
     var authorId;
@@ -37,6 +37,10 @@ describe("task, ", function() {
             .then(function (res) {
                 request2Id = res.body._id;
                 done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                process.exit(1);
             });
     });
 
@@ -100,7 +104,7 @@ describe("task, ", function() {
             .catch(function (err) {
                 console.log(err);
                 process.exit(1);
-            })
+            });
 
 
     });
