@@ -21,8 +21,6 @@ describe("task, ", function() {
     var request1Id;
     var request2Id;
 
-
-
     beforeEach(function (done) {
         call.cleanup()
             .then(function () {
