@@ -86,6 +86,9 @@ app.use('/api', tasksRoutes);
 var requestsRoutes = require('./controllers/requests');
 app.use('/api', requestsRoutes);
 
+var requestcommentsRoutes = require('./controllers/requestcomments');
+app.use('/api', requestcommentsRoutes);
+
 var requirementsRoutes = require('./controllers/requirements');
 app.use('/api', requirementsRoutes);
 

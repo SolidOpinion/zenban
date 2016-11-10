@@ -107,20 +107,36 @@ router.get('/tasks/:id', function(req, res, next) {
 router.get('/tasks', function(req, res, next) {
 
     Request
-        .find({ status: { '$in' : ['In progress', 'Done']} })
-        .populate('author', 'name _id')
-        .exec(function (err, requests) {
-            if (err) {
-                res.sendStatus(500);
-                return next();
+        .find({ status: { '$in' : ['In queue', 'In progress']} }).exec()
+        .then(function(requests) {
+            let requestIds = [];
+            if (requests.length > 0) {
+                for (var key in requests) {
+                    requestIds.push(requests[key]._id);
+                }
             }
-            if (requests.length < 1) {
-                res.json([]);
-                return next();
-            }
-            res.json(requests);
+            return Task.find()
+                .where('request').in(requestIds)
+                .where('status').in(['Backlog', 'Done'])
+                .populate('author', 'name _id')
+                .populate('developer', 'name _id')
+                .populate('request', 'createdAt title author _id')
+                .exec();
 
+            //TODO: ADD here filters and all in progress rtasks + populate for all
+
+        })
+        .then(function(tasks) {
+            console.log(tasks);
+            res.json(tasks);
+
+        })
+        .catch(function(err){
+            logger.error(err);
+            res.sendStatus(500);
+            return next();
         });
+
 
 /*
 
@@ -201,76 +217,8 @@ router.get('/tasks', function(req, res, next) {
 */
 });
 
-/*
-// post comment
-router.post('/requests/:id/comments', function(req, res, next) {
-    Request.findByIdAndUpdate(req.params.id, {
-        $push: {
-            comments: {
-                body: req.body.body,
-                author: req.user._id
-            }
-        }
-    }, function (err, request) {
-        if (err) {
-            res.status(406).json({ message: "Model validation error" });
-            return next();
-        } else {
-            if (request == null) {
-                res.sendStatus(404);
-                return next();
-            }
-            Request.where({ _id:req.params.id }).findOne(function (err, requestResult) {
-                if (err) {
-                    res.sendStatus(500);
-                    return next();
-                } else {
-                    if (requestResult == null) {
-                        res.sendStatus(500);
-                        return next();
-                    } else {
-                        res.json(requestResult);
-                    }
-                }
-            });
-        }
-    });
-});
 
-// delete comment
-router.delete('/requests/:id/comments/:cid', function(req, res, next) {
-    Request.findByIdAndUpdate(req.params.id, {
-        $pull: {
-            comments: {
-                _id: req.params.cid
-            }
-        }
-    }, function (err, request) {
-        if (err) {
-            res.status(406).json({ message: "Model validation error" });
-            return next();
-        } else {
-            if (request == null) {
-                res.sendStatus(404);
-                return next();
-            }
-            Request.where({ _id:req.params.id }).findOne(function (err, requestResult) {
-                if (err) {
-                    res.sendStatus(500);
-                    return next();
-                } else {
-                    if (requestResult == null) {
-                        res.sendStatus(500);
-                        return next();
-                    } else {
-                        res.json(requestResult);
-                    }
-                }
-            });
-        }
-    });
-});
-*/
+
 module.exports = router;
 
 

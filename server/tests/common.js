@@ -29,6 +29,11 @@ class Common {
             });
     }
 
+/**
+ * USER
+ */
+
+
     createUser(email, name, password) {
         return chai.request(server)
             .post('/api/users')
@@ -70,13 +75,18 @@ class Common {
             .set('Authorization', token);
     }
 
+/**
+ * REQUIREMENT
+ */
 
-    createRequirement(title, token) {
+
+    createRequirement(title, token, parent) {
         return chai.request(server)
             .post('/api/requirements')
             .set('Authorization', token)
             .send({
-                title: title
+                title: title,
+                parent: parent
             })
     }
 
@@ -99,20 +109,77 @@ class Common {
             .send(data);
     }
 
-    createRequest(title, description, authorId) {
+    getRequirements(data, token) {
+        return chai.request(server)
+            .get('/api/requirements')
+            .query(data)
+            .set('Authorization', token);
+    }
+
+/**
+ * REQUEST
+ */
+
+    createRequest(title, description, token) {
         return chai.request(server)
             .post('/api/requests')
-            .set('Test', authorId)
+            .set('Authorization', token)
             .send({
                 title: title,
                 description: description
             });
     }
 
-    createTask(title, type, authorId, requestId) {
+    getRequest(id, token) {
+        return chai.request(server)
+            .get('/api/requests/' + id)
+            .set('Authorization', token);
+    }
+
+    modifyRequest(id, data, token) {
+        return chai.request(server)
+            .put('/api/requests/' + id)
+            .set('Authorization', token)
+            .send(data);
+    }
+
+    removeRequest(id, token) {
+        return chai.request(server)
+            .delete('/api/requests/' + id)
+            .set('Authorization', token);
+    }
+
+    getRequests(data, token) {
+        return chai.request(server)
+            .get('/api/requests')
+            .query(data)
+            .set('Authorization', token);
+    }
+
+    createRequestComment(rid, body, token) {
+        return chai.request(server)
+            .post('/api/requestcomments/' + rid)
+            .set('Authorization', token)
+            .send({
+                body: body
+            });
+    }
+
+    removeRequestComment(rid, cid, token) {
+        return chai.request(server)
+            .delete('/api/requestcomments/' + rid + '/' + cid)
+            .set('Authorization', token);
+    }
+
+
+/**
+ * TASK
+ */
+
+    createTask(title, type, requestId, token) {
         return chai.request(server)
             .post('/api/tasks')
-            .set('Test', authorId)
+            .set('Authorization', token)
             .send({
                 title: title,
                 type: type,
@@ -120,23 +187,30 @@ class Common {
             });
     }
 
-    getTask(id, authorId) {
+    getTask(id, token) {
         return chai.request(server)
             .get('/api/tasks/' + id)
-            .set('Test', authorId);
+            .set('Authorization', token);
     }
 
-    modifyTask(id, authorId, data) {
+    modifyTask(id, data, token) {
         return chai.request(server)
             .put('/api/tasks/' + id)
-            .set('Test', authorId)
+            .set('Authorization', token)
             .send(data);
     }
 
-    removeTask(id, authorId) {
+    removeTask(id, token) {
         return chai.request(server)
             .delete('/api/tasks/' + id)
-            .set('Test', authorId);
+            .set('Authorization', token);
+    }
+
+    getTasks(data, token) {
+        return chai.request(server)
+            .get('/api/tasks')
+            .query(data)
+            .set('Authorization', token);
     }
 
 }
