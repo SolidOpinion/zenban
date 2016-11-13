@@ -7,7 +7,7 @@ var call = require('./common');
 var Requirement = require('../models/requirement');
 chai.use(chaiHttp);
 
-describe.skip("requirement, ", function() {
+describe("requirement, ", function() {
     this.timeout(10000);
 
     var token1;

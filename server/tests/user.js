@@ -7,7 +7,7 @@ var call = require('./common');
 var User = require('../models/user');
 chai.use(chaiHttp);
 
-describe.skip("user, ", function() {
+describe("user, ", function() {
     this.timeout(10000);
 
     beforeEach(function (done) {

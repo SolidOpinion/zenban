@@ -11,7 +11,7 @@ var User = require('../models/user');
 
 chai.use(chaiHttp);
 
-describe.skip("request, ", function() {
+describe("request, ", function() {
     this.timeout(10000);
 
     var token1;

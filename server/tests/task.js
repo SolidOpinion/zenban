@@ -26,9 +26,6 @@ describe("task, ", function() {
             });
     });
 
-/*
-
-
     it("can be created", function(done) {
         call.signupAndLogin('test1@solidopinion.com', 'test1', '123456')
             .then(function (res) {
@@ -137,10 +134,10 @@ describe("task, ", function() {
             });
     });
 
-*/
+
     it("can be returned as a list", function(done) {
         call.signupAndLogin('test1@solidopinion.com', 'test1', '123456')
-            .then(function (res) {
+            .then(function (res) { // create request 'New requests' and task 'Backlog'
                 res.should.have.status(200);
                 token1 = res.body.token;
                 return call.createRequest('Request 1', 'description', token1 );
@@ -149,7 +146,7 @@ describe("task, ", function() {
                 res.should.have.status(200);
                 return call.createTask('Task 1 from Request 1', 'tech', res.body._id, token1);
             })
-            .then(function (res) {
+            .then(function (res) { // create request 'In progress' and task 'Backlog'
                 res.should.have.status(200);
                 return call.createRequest('Request 2', 'description', token1 );
             })
@@ -161,12 +158,25 @@ describe("task, ", function() {
                 res.should.have.status(200);
                 return call.createTask('Task 2 from Request 2', 'tech', res.body._id, token1);
             })
+            .then(function (res) { // create request 'New requests' and task 'In progress'
+                res.should.have.status(200);
+                return call.createRequest('Request 3', 'description', token1 );
+            })
+            .then(function (res) {
+                res.should.have.status(200);
+                return call.createTask('Task 3 from Request 3', 'bug', res.body._id, token1);
+            })
+            .then(function (res) {
+                res.should.have.status(200);
+                return call.modifyTask(res.body._id, { status: 'In progress' }, token1 );
+            })
             .then(function (res) {
                 res.should.have.status(200);
                 return call.getTasks({}, token1);
             })
             .then(function (res) {
                 res.should.have.status(200);
+                res.should.have.property('body').with.lengthOf(2).and.be.instanceof(Array);
                 done();
             })
             .catch(function (err) {

@@ -5,16 +5,16 @@ var config = require('../config.json')['dev'];
 var server = require('../server');
 var call = require('./common');
 
-var Request = require('../models/request');
+var Task = require('../models/task');
 var User = require('../models/user');
 
 
 chai.use(chaiHttp);
 
-describe("request, ", function() {
+describe("task, ", function() {
     this.timeout(10000);
 
-    var token1, rid;
+    var token1, tid;
 
     beforeEach(function (done) {
         call.cleanup()
@@ -29,16 +29,20 @@ describe("request, ", function() {
             .then(function (res) {
                 res.should.have.status(200);
                 token1 = res.body.token;
-                return call.createRequest('Login problems', 'My login doesnt work as expected', token1 );
+                return call.createRequest('Login problems', 'My login doesnt work as expected', token1);
             })
             .then(function (res) {
                 res.should.have.status(200);
-                rid = res.body._id;
-                return call.createRequestComment(rid, 'Test comment', token1);
+                return call.createTask('Cleanup code', 'bug', res.body._id, token1);
             })
             .then(function (res) {
                 res.should.have.status(200);
-                return call.getRequest(rid, token1);
+                tid = res.body._id;
+                return call.createTaskComment(tid, 'Test comment', token1);
+            })
+            .then(function (res) {
+                res.should.have.status(200);
+                return call.getTask(tid, token1);
             })
             .then(function (res) {
                 res.body.should.have.property('comments').with.lengthOf(1).and.be.instanceof(Array);
@@ -60,17 +64,20 @@ describe("request, ", function() {
             })
             .then(function (res) {
                 res.should.have.status(200);
-                rid = res.body._id;
-                return call.createRequestComment(rid, 'Test comment', token1);
+                return call.createTask('Cleanup code', 'bug', res.body._id, token1);
             })
             .then(function (res) {
                 res.should.have.status(200);
-                rid = res.body._id;
-                return call.removeRequestComment(rid, res.body.comments[0]._id, token1);
+                tid = res.body._id;
+                return call.createTaskComment(tid, 'Test comment', token1);
             })
             .then(function (res) {
                 res.should.have.status(200);
-                return call.getRequest(rid, token1);
+                return call.removeTaskComment(tid, res.body.comments[0]._id, token1);
+            })
+            .then(function (res) {
+                res.should.have.status(200);
+                return call.getTask(tid, token1);
             })
             .then(function (res) {
                 res.body.should.have.property('comments').with.lengthOf(0).and.be.instanceof(Array);

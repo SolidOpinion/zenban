@@ -106,52 +106,15 @@ router.get('/tasks/:id', function(req, res, next) {
 // list
 router.get('/tasks', function(req, res, next) {
 
-    Request
-        .find({ status: { '$in' : ['In queue', 'In progress']} }).exec()
-        .then(function(requests) {
-            let requestIds = [];
-            if (requests.length > 0) {
-                for (var key in requests) {
-                    requestIds.push(requests[key]._id);
-                }
-            }
-            return Task.find()
-                .where('request').in(requestIds)
-                .where('status').in(['Backlog', 'Done'])
-                .populate('author', 'name _id')
-                .populate('developer', 'name _id')
-                .populate('request', 'createdAt title author _id')
-                .exec();
-
-            //TODO: ADD here filters and all in progress rtasks + populate for all
-
-        })
-        .then(function(tasks) {
-            console.log(tasks);
-            res.json(tasks);
-
-        })
-        .catch(function(err){
-            logger.error(err);
-            res.sendStatus(500);
-            return next();
-        });
-
-
-/*
-
     let search = {};
 
     search.isRemoved = false;
-
-    //TODO: filter all tasks where request is not in progress or done
 
     if (req.query && req.query.title && req.query.title.length > 0) {
         search.title = {};
         search.title.$regex = req.query.title;
         search.title.$options = 'i';
     }
-
 
     if (req.query && req.query.tag && req.query.tag.length > 0) {
         search.tags = {};
@@ -180,41 +143,55 @@ router.get('/tasks', function(req, res, next) {
         search.dependsOn.$ne = null;
     }
 
-    Task
-        .find(search)
-        .populate('author', 'name _id')
-        .populate('developer', 'name _id')
-        .populate('request', 'createdAt title author _id')
-        .exec(function (err, results) {
-            if (err) {
-                res.sendStatus(500);
-                return next();
+
+    Request
+        .find({ status: { '$in' : ['In queue', 'In progress']} }).exec()
+        .then(function(requests) {
+            let requestIds = [];
+            if (requests.length > 0) {
+                for (var key in requests) {
+                    requestIds.push(requests[key]._id);
+                }
             }
-            let promiseArray = [];
-            if (results.length < 1) {
+            return Task.find(search)
+                .or([
+                    { $and: [ { request: { $in: requestIds } }, { status: { $in: ['Backlog', 'Done'] } } ] },
+                    { status: { $in: ['In progress'] } }
+                ])
+                .populate('author', 'name _id')
+                .populate('developer', 'name _id')
+                .populate('request', 'createdAt title author _id')
+                .exec();
+        })
+        .then(function(tasks) {
+            if (tasks.length < 1) {
                 res.json([]);
                 return next();
             }
-            results.forEach(function (value, key) {
+            let promiseArray = [];
+            tasks.forEach(function (value, key) {
                 promiseArray.push(Request.populate(value, {
                     path: 'request.author',
                     select: 'name _id',
                     model: User
                 }).then(function (task) {
-                    results[key] = task;
+                    tasks[key] = task;
                 }));
             });
-
-            Promise.all(promiseArray)
-                .then(function() {
-
-
-
-                    res.json(results);
+            return Promise.all(promiseArray).then(function () {
+                return new Promise(function(resolve, reject) {
+                    resolve(tasks);
                 });
+            });
+        })
+        .then(function(results) {
+            res.json(results);
+        })
+        .catch(function(err){
+            logger.error(err);
+            res.sendStatus(500);
+            return next();
         });
-
-*/
 });
 
 

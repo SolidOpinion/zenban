@@ -83,6 +83,9 @@ var router = express.Router();
 var tasksRoutes = require('./controllers/tasks');
 app.use('/api', tasksRoutes);
 
+var taskcommentsRoutes = require('./controllers/taskcomments');
+app.use('/api', taskcommentsRoutes);
+
 var requestsRoutes = require('./controllers/requests');
 app.use('/api', requestsRoutes);
 

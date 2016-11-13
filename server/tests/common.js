@@ -213,6 +213,22 @@ class Common {
             .set('Authorization', token);
     }
 
+    createTaskComment(tid, body, token) {
+        return chai.request(server)
+            .post('/api/taskcomments/' + tid)
+            .set('Authorization', token)
+            .send({
+                body: body
+            });
+    }
+
+    removeTaskComment(tid, cid, token) {
+        return chai.request(server)
+            .delete('/api/taskcomments/' + tid + '/' + cid)
+            .set('Authorization', token);
+    }
+
+
 }
 
 
