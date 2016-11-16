@@ -2,7 +2,8 @@
 
 var chai = require('chai');
 var chaiHttp = require('chai-http');
-var config = require('../config.json')['dev'];
+
+process.env.NODE_ENV = 'test';
 var server = require('../server');
 
 var Request = require('../models/request');

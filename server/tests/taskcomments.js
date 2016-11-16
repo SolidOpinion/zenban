@@ -1,17 +1,10 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var should = chai.should();
-var config = require('../config.json')['dev'];
-var server = require('../server');
 var call = require('./common');
-
-var Task = require('../models/task');
-var User = require('../models/user');
-
-
 chai.use(chaiHttp);
 
-describe("task, ", function() {
+describe("task comments, ", function() {
     this.timeout(10000);
 
     var token1, tid;

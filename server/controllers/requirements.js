@@ -2,6 +2,7 @@
 var router = require('express').Router();
 var config = require('../config.json')[process.env.NODE_ENV || 'dev'];
 var log4js = require('log4js');
+var arrayToTree = require('array-to-tree');
 
 var logger = log4js.getLogger();
 logger.setLevel(config.LOG_LEVEL);
@@ -52,14 +53,21 @@ router.put('/requirements/:id', function(req, res, next) {
 
 // delete
 router.delete('/requirements/:id', function(req, res, next) {
-    Requirement.findByIdAndUpdate(req.params.id, { $set: { isRemoved: true }}, function (err, requirement) {
-        if (err) {
+    Requirement
+        .find({ parent: req.params.id, isRemoved: false })
+        .then(function(result) {
+            if (result && result.length > 0) {
+                throw new Error('Cant remove parent with active children');
+            }
+            return Requirement.findByIdAndUpdate(req.params.id, {$set: {isRemoved: true}}).exec();
+        })
+        .then(function(requirement) {
+            res.json({_id: requirement._id});
+        })
+        .catch(function (err) {
             res.status(406).json({ message: "Can't remove" });
             return next();
-        } else {
-            res.json({_id: requirement._id});
-        }
-    });
+        })
 });
 
 // get
@@ -80,6 +88,7 @@ router.get('/requirements/:id', function(req, res, next) {
     });
 });
 
+
 // list
 router.get('/requirements', function(req, res, next) {
     let search;
@@ -97,7 +106,15 @@ router.get('/requirements', function(req, res, next) {
                 res.sendStatus(500);
                 return next();
             }
-            res.json(results);
+            var tree = [];
+            for (var i=0; i<results.length; i++) {
+                var requirement = results[i].toObject();
+                tree.push(requirement);
+            }
+            res.json(arrayToTree(tree, {
+                parentProperty: 'parent',
+                customID: '_id'
+            }));
         });
 });
 

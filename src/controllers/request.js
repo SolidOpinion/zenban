@@ -30,18 +30,18 @@ export class Signup {
 
         this.reqs = [
             {
-                name: "one",
+                name: "User login",
                 children: [
                     {
-                        name: "one-one"
+                        name: "via Facebook"
                     },
                     {
-                        name: "one-two"
+                        name: "via Twitter"
                     }
                 ]
             },
             {
-                name: "two"
+                name: "User signup"
             }
         ]
     }

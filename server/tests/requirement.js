@@ -1,10 +1,7 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var should = chai.should();
-var config = require('../config.json')['dev'];
-var server = require('../server');
 var call = require('./common');
-var Requirement = require('../models/requirement');
 chai.use(chaiHttp);
 
 describe("requirement, ", function() {
@@ -45,7 +42,7 @@ describe("requirement, ", function() {
             });
     });
 
-    it("can be created with valid fields only", function(done) {
+    it.skip("can be created with valid fields only", function(done) {
         call.signupAndLogin('test1@solidopinion.com', 'test1', '123456')
             .then(function (res) {
                 res.should.have.status(200);
@@ -118,14 +115,18 @@ describe("requirement, ", function() {
             })
             .then(function (res) {
                 res.should.have.status(200);
+                return call.createRequirement('User can login', token1);
+            })
+            .then(function (res) {
+                res.should.have.status(200);
                 return call.getRequirements({}, token1);
             })
             .then(function (res) {
                 res.should.have.status(200);
                 res.should.have.property('body').with.lengthOf(2).and.be.instanceof(Array);
                 res.body[0].title.should.equal('User can signup');
-                res.body[1].title.should.equal('With Facebook');
-                res.body[1].parent.should.equal(res.body[0]._id);
+                res.body[1].title.should.equal('User can login');
+                res.body[0].should.have.property('children').with.lengthOf(1).and.be.instanceof(Array);
                 done();
             })
             .catch(function (err) {
@@ -186,5 +187,31 @@ describe("requirement, ", function() {
                 process.exit(1);
             });
     });
+
+
+    it("doesn't allow to remove parents with active childs", function(done) {
+        var r;
+        call.signupAndLogin('test1@solidopinion.com', 'test1', '123456')
+            .then(function (res) {
+                res.should.have.status(200);
+                token1 = res.body.token;
+                return call.createRequirement('User can signup', token1);
+            })
+            .then(function (res) {
+                r = res.body._id;
+                res.should.have.status(200);
+                return call.createRequirement('With Facebook', token1, res.body._id);
+            })
+            .then(function (res) {
+                res.should.have.status(200);
+                return call.removeRequirement(r, token1);
+            })
+            .catch(function (err) {
+                err.should.have.status(406);
+                done();
+            });
+    });
+
+
 
 });
