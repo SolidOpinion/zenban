@@ -1,0 +1,8 @@
+<template>
+    <ul>
+        <li>
+            <div draggable="true"><span>${current.name}</span></div>
+            <req-tree-node repeat.for="node of current.children" current.bind="node"></req-tree-node>
+        </li>
+    </ul>
+</template>

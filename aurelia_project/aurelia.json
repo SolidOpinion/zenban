@@ -117,6 +117,12 @@
             ]
           },
           {
+            "name": "moment",
+            "path": "../node_modules/moment/min",
+            "main": "moment.min",
+            "exports": "moment"
+          },
+          {
             "name": "bootstrap",
             "path": "../node_modules/bootstrap/dist",
             "main": "js/bootstrap.min",

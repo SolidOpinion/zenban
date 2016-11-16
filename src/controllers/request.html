@@ -17,7 +17,7 @@
             </ul>
 <!-- Description -->
            <div class="form-under-tab" if.bind="currentTab == 'Description'">
-               <form role="form" submit.delegate="descriptionSave()">
+               <form role="form" submit.delegate="save()">
                    <div class="checkbox" align="right"  if.bind="!isNewRequest" >
                        <label><input type="checkbox" value.bind="request.isProblem"> Request has a problem</label>
                    </div>
@@ -28,21 +28,25 @@
                    <div class="form-group">
                        <label for="title">Description</label>
                        <textarea class="form-control" rows="8" value.bind="request.description" id="description"></textarea>
-                       <span if.bind="!isNewRequest" style="color: gray;">by ${request.author} on ${request.creation_date}</span>
+                       <span if.bind="!isNewRequest" style="color: gray;font-size:12px;">by <b>${request.author.name}</b> on <b>${request.createdAt}</b></span>
                    </div>
-                   <button type="submit" class="btn btn-default">Save</button>
+                   <button type="submit" class="btn btn-default" disabled.bind="isLoading">Save</button>
                </form>
            </div>
 
-<!-- Description -->
+<!-- Requirements -->
             <div class="form-under-tab" if.bind="currentTab == 'Requirements'">
-                <form role="form" submit.delegate="signup()">
-                    <div class="form-group">
-                        <label for="name">Requirements</label>
-                        <input type="text" value.bind="name" class="form-control" id="name" placeholder="Name">
+                <form role="form" submit.delegate="addRequirement()">
+                    <div class="input-group">
+                        <input type="text" value.bind="newRequirement" class="form-control" id="newRequirement" placeholder="New requirement">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" disabled.bind="isLoading">Create</button>
+                        </span>
                     </div>
-                    <button type="submit" class="btn btn-default">Signup</button>
                 </form>
+                <hr>
+                <require from='./req-tree-node'></require>
+                <req-tree-node repeat.for="req of reqs" current.bind="req"></req-tree-node>
             </div>
 
 

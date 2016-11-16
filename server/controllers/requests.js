@@ -17,7 +17,7 @@ router.post('/requests', function(req, res, next) {
     request.position = 1000; // move request to the end
     request.author = req.user._id;
 
-    logger.info(request);
+    //logger.info(request);
 
     request.save(function (err) {
         if (err) {

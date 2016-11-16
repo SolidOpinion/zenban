@@ -37,12 +37,14 @@ var Auth = require('./libs/auth');
 var User = require('./models/user');
 
 app.use(function(req, res, next) {
+/*
     if (req.header('Test')) {
         logger.info("Skip auth for test");
         req.user = {};
         req.user._id = req.header('Test');
         return next();
     }
+*/
     if ((req.path == '/api/auth' && req.method == 'POST') || (req.path == '/api/users' && req.method == 'POST')) {
         logger.info(req.path + " route is not protected");
         return next();
