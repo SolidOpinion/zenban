@@ -40,7 +40,7 @@ var UserSchema = mongoose.Schema({
     }
 });
 
-UserSchema.plugin(autoInc.plugin, 'User');
+UserSchema.plugin(autoInc.plugin, { model: 'User', field: '_id', startAt: 1 });
 UserSchema.plugin(uniqueValidator);
 
 module.exports = mongoose.model('User', UserSchema);

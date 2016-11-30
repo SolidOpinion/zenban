@@ -103,7 +103,7 @@ var TaskSchema = mongoose.Schema({
     }
 });
 
-TaskSchema.plugin(autoInc.plugin, 'Task');
+TaskSchema.plugin(autoInc.plugin, { model: 'Task', field: '_id', startAt: 1 });
 TaskSchema.plugin(uniqueValidator);
 
 module.exports = mongoose.model('Task', TaskSchema);

@@ -3,14 +3,15 @@ import {Rest} from "../models/rest";
 import {Auth} from '../models/auth';
 import {Router} from "aurelia-router";
 import {LogManager} from 'aurelia-framework';
+import {EventAggregator} from 'aurelia-event-aggregator';
 import moment from 'moment';
 import $ from 'jquery';
 
 
 LogManager.setLevel(LogManager.logLevel.error);
 
-@inject(Rest, Auth, Router, LogManager)
-export class Signup {
+@inject(Rest, Auth, Router, LogManager, EventAggregator)
+export class Request {
 
     error = '';
     currentTab = 'Description';
@@ -18,36 +19,22 @@ export class Signup {
     request = {};
     isNewRequest = true;
 
-    newRequirement = '';
-
     isLoading = false;
 
-    constructor(rest, auth, router, logManager) {
+    constructor(rest, auth, router, logManager, eventAggregator) {
         this.rest = rest;
         this.auth = auth;
         this.router = router;
         this.logger = logManager.getLogger(this);
-
-        this.reqs = [
-            {
-                name: "User login",
-                children: [
-                    {
-                        name: "via Facebook"
-                    },
-                    {
-                        name: "via Twitter"
-                    }
-                ]
-            },
-            {
-                name: "User signup"
-            }
-        ]
+        this.ea = eventAggregator;
     }
 
     attached() {
         $('#title').focus();
+    }
+
+    detached() {
+
     }
 
     activate(params) {
@@ -89,11 +76,6 @@ export class Signup {
 
     switchTabTo(tabName) {
         this.currentTab = tabName;
-        if (tabName == 'Requirements')  {
-            setTimeout(function() {
-                $('#newRequirement').focus();
-            }, 100);
-        }
         if (tabName == 'Description')  {
             setTimeout(function() {
                 $('#title').focus();
@@ -145,26 +127,5 @@ export class Signup {
 
 
     };
-
-    addRequirement() {
-        this.isLoading = true;
-        this.rest
-            .create('requirements', {
-                title: this.newRequirement
-            })
-            .then(response => {
-                this.isLoading = false;
-                this.newRequirement = '';
-            })
-            .catch(error => {
-                console.log(error);
-                this.isLoading = false;
-                if (error.message != null) {
-                    this.error = error.message;
-                } else {
-                    this.error = 'unknown error, sorry (' + error.code + ')';
-                }
-            });
-    }
 
 }

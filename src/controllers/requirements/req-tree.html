@@ -1,0 +1,23 @@
+<template>
+    <form role="form" submit.delegate="add()">
+        <div class="input-group">
+            <input type="text" value.bind="newRequirement" class="form-control" id="newRequirement" placeholder="New requirement or drag and drop here to edit">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="submit" disabled.bind="isLoading || newRequirement == '' ">Create</button>
+            </span>
+        </div>
+    </form>
+    <div class="panel panel-default" style="border: 1px dashed gray;margin-top: 20px;">
+        <div class="panel-body" style="color: gray;" align="center">
+            Drag and drop here to move it to the root level
+        </div>
+    </div>
+
+    <require from='./req-tree-node'></require>
+    <req-tree-node repeat.for="req of reqs" current.bind="req"></req-tree-node>
+    <div class="panel panel-default" style="border: 1px dashed gray;margin-top: 20px;">
+        <div class="panel-body" style="color: gray;" align="center">
+            Drag and drop here to remove a requirement
+        </div>
+    </div>
+</template>

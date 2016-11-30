@@ -101,7 +101,7 @@ var RequestSchema = mongoose.Schema({
     }
 });
 
-RequestSchema.plugin(autoInc.plugin, 'Request');
+RequestSchema.plugin(autoInc.plugin, { model: 'Request', field: '_id', startAt: 1 });
 RequestSchema.plugin(uniqueValidator);
 
 module.exports = mongoose.model('Request', RequestSchema);

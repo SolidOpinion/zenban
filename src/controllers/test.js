@@ -7,7 +7,7 @@ import {LogManager} from 'aurelia-framework';
 LogManager.setLevel(LogManager.logLevel.error);
 
 @inject(Rest, Auth, Router, LogManager)
-export class Signup {
+export class Test {
 
     email = '';
     name = '';

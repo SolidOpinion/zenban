@@ -68,7 +68,7 @@ export class Rest {
     list(resource, filters) {
         var self = this;
         return new Promise(function(resolve, reject) {
-            self.http.createRequest("/api/" + resource + "-list")
+            self.http.createRequest("/api/" + resource)
                 .asGet()
                 .withBaseUrl(self.endpoint)
                 .withParams(filters)

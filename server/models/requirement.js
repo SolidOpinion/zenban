@@ -25,7 +25,7 @@ var RequirementSchema = mongoose.Schema({
     }
 });
 
-RequirementSchema.plugin(autoInc.plugin, 'Requirement');
+RequirementSchema.plugin(autoInc.plugin, { model: 'Requirement', field: '_id', startAt: 1 });
 RequirementSchema.plugin(uniqueValidator);
 
 module.exports = mongoose.model('Requirement', RequirementSchema);

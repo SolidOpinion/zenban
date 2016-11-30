@@ -1,11 +1,11 @@
 {
   "dev": {
-    "MONGO_URI": "mongodb://localhost/zenban",
+    "MONGO_URI": "mongodb://10.0.1.11/zenban",
     "SECRET": "P%S6XRD#()E+D!q}t>?~e,%G6aU`^KtAuLeHk.vq??I|9#}t&$2|k?1%YtMg1l_j",
     "LOG_LEVEL": "INFO"
   },
   "test": {
-    "MONGO_URI": "mongodb://localhost/zenbantest",
+    "MONGO_URI": "mongodb://10.0.1.11/zenbantest",
     "SECRET": "P%S6XRD#()E+D!q}t>?~e,%G6aU`^KtAuLeHk.vq??I|9#}t&$2|k?1%YtMg1l_j",
     "LOG_LEVEL": "ERROR"
   },

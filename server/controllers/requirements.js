@@ -25,6 +25,35 @@ router.post('/requirements', function(req, res, next) {
 
 // modify
 router.put('/requirements/:id', function(req, res, next) {
+
+    if (req.body.parent) {
+        let child = null;
+        let newParent = null;
+        // looks like parent can be changed
+        if (req.body.parent < 1 || req.body.parent == params.id) {
+            req.body.parent = null;
+        } else {
+            Requirement.findOne({ _id:req.params.id }).exec()
+                .then(function (r) {
+                    child = r;
+                    return Requirement.findOne({ _id:req.body.parent }).exec();
+                })
+                .then(function (r) {
+                    newParent = r;
+                    if (child == null || newParent == null) {
+                        throw new Error();
+                    }
+                    if (newParent.parent == child._id) {
+                        throw new Error();
+                    }
+                })
+                .catch(function (e) {
+                    res.sendStatus(500);
+                    next();
+                });
+        }
+    }
+    /*
     Requirement.findByIdAndUpdate(req.params.id, { $set: req.body}, function (err, requirement) {
         if (err) {
             res.status(406).json({ message: "Model validation error" });
@@ -48,7 +77,8 @@ router.put('/requirements/:id', function(req, res, next) {
                 }
             });
         }
-    });
+    });*/
+
 });
 
 // delete
@@ -92,7 +122,6 @@ router.get('/requirements/:id', function(req, res, next) {
 // list
 router.get('/requirements', function(req, res, next) {
     let search;
-
     if (req.query && req.query.title && req.query.title.length > 0) {
         search = { "title": {"$regex": req.query.title, "$options": "i"}, "isRemoved": false };
     } else {
@@ -111,6 +140,11 @@ router.get('/requirements', function(req, res, next) {
                 var requirement = results[i].toObject();
                 tree.push(requirement);
             }
+            logger.info(tree);
+            logger.info(arrayToTree(tree, {
+                parentProperty: 'parent',
+                customID: '_id'
+            }));
             res.json(arrayToTree(tree, {
                 parentProperty: 'parent',
                 customID: '_id'

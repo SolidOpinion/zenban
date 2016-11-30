@@ -1,7 +1,7 @@
 <template>
     <ul style="list-style-type:none;padding:0; margin:0; padding-left: 20px;">
         <li style="padding-top: 3px;padding-bottom: 3px;">
-            <div draggable="true"><input type="checkbox" style="margin-right: 5px;"><span>${current.name}</span></div>
+            <div><input type="checkbox" style="margin-right: 5px;"><span draggable="true" id="${current._id}">${current.title}</span></div>
             <req-tree-node repeat.for="node of current.children" current.bind="node"></req-tree-node>
         </li>
     </ul>
